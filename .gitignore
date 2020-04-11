@@ -1,0 +1,15 @@
+# .gitignore 
+
+# dependencies
+/node_modules
+/server/node_modules
+
+# config file
+./config/db.config.js
+
+#misc
+build
+npm-debug.log
+.env
+.DS_Store
+
