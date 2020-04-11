@@ -5,10 +5,10 @@ First time run:
 
 npm install
 
-To run the project:
+To run the project
 
 npm start
 
-To display rows from user table:
+For a list of API endpoints:
 
-Navigate to localhost:8000
+Visit postman team workspace 
