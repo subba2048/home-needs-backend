@@ -5,7 +5,6 @@ const userSchema = require("../schema/user.schema");
 
 //Get all users
 Router.get("/",(req, res, next)=>{
-    console.log(userSchema.getColumnInfo('created'));
     userModel.getUsers(function(err,rows){
         if(!err)
         res.send(rows);

@@ -21,6 +21,7 @@ const USER =
     },
     address_id_fk: {
       type: 'INTEGER',
+      foreignKey: true,
       notnull: true
     },
     email: {
@@ -45,7 +46,12 @@ const getColumnInfo = function getColumnInfo(key) {
   return USER[key];
 }
 
+const getObject = function getObject(){
+  return USER;
+}
+
 module.exports = {
   getColumns: getColumns,
-  getColumnInfo: getColumnInfo
+  getColumnInfo: getColumnInfo,
+  getObject: getObject
 }
