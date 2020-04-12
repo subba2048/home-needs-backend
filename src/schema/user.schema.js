@@ -6,23 +6,34 @@ const USER =
       autoIncrement: true
     },
     first_name: {
-      type: 'STRING'
+      type: 'STRING',
+      notnull: true
     },
-    first_name: {
+    middle_name: {
       type: 'STRING'
     },
     last_name: {
-      type: 'STRING'
+      type: 'STRING',
+      notnull: true
+    },
+    user_type:{
+      type: "ENUM('admin', 'customer', 'service_provider')"
+    },
+    address_id_fk: {
+      type: 'INTEGER',
+      notnull: true
     },
     email: {
-      type: 'STRING'
+      type: 'STRING',
+      notnull: true
     },
-    password: {
-      type: 'STRING'
+    status:{
+      type: "ENUM('registered', 'active', 'deleted')"
     },
-    created: {
+    user_since: {
       type: 'DATE',
-      defaultValue: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      defaultValue: new Date().toISOString().slice(0, 19).replace('T', ' '),
+      notnull: true
     }
   };
 

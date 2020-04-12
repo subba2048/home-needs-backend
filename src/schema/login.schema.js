@@ -6,14 +6,16 @@ const LOGIN =
       autoIncrement: true
     },
     username: {
-      type: 'STRING'
+      type: 'STRING',
+      notnull: true
     },
     password: {
-      type: 'STRING'
+      type: 'STRING',
+      notnull: true
     },
-    created: {
-      type: 'DATE',
-      defaultValue: new Date().toISOString().slice(0, 19).replace('T', ' ')
+    user_id_fk: {
+      type: 'INTEGER',
+      notnull: true
     }
   }
 
