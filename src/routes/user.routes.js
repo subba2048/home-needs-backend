@@ -1,14 +1,19 @@
 const express = require("express");
 const Router = express.Router();
 const userModel = require("../models/user.model");
+const userSchema = require("../schema/user.schema");
 
 //Get all users
 Router.get("/",(req, res, next)=>{
+    console.log(userSchema.getColumnInfo('created'));
     userModel.getUsers(function(err,rows){
         if(!err)
         res.send(rows);
         else
         res.send(err);
+        // rows.forEach( (row) => {
+        //     console.log(`${row.name} lives in ${row.city}`);
+        //   });
     }
 )});
 //Get single user by ID
@@ -22,7 +27,7 @@ Router.get("/:id",(req,res, next)=>{
 });
 
 //Update user API
-Router.post("/:id",(req,res,next)=>{
+Router.post("/update/:id",(req,res,next)=>{
     const payLoad = req.body;
     userModel.updateUser(req.params.id,payLoad,function(err,rows){
         if(!err)
@@ -34,6 +39,8 @@ Router.post("/:id",(req,res,next)=>{
 //Create user API
 Router.post("/create",(req,res, next)=>{
     const payLoad = req.body;
+    if(!payLoad['user_since'] || payLoad['user_since']=='')
+        payLoad['user_since'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
     userModel.createUser(payLoad,function(err,rows){
         if(!err){
             res.send(rows);
