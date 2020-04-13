@@ -13,7 +13,7 @@ router.get('/', function(req, res, next) {
 
 router.use('/users',usersRouter);
 router.use('/login',usersRouter);
-router.use('/location',usersRouter);
+router.use('/location',locationRouter);
 router.use('/schedule',usersRouter);
 
 

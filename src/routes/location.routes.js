@@ -3,7 +3,7 @@ const Router = express.Router();
 const locationModel = require("../models/location.model");
 
 //Get a user location in detail
-Router.get("/location/:id", (req, res)=>{
+Router.get("/:id", (req, res)=>{
     locationModel.getLocation(req.params.id, (err, result)=>{
         if(err){
             res.send(err);
@@ -15,8 +15,9 @@ Router.get("/location/:id", (req, res)=>{
     });
 });
 
+
 //Update user location API
-Router.post("/location/:id", (req, res)=>{
+Router.post("/update/:id", (req, res)=>{
     const payLoad = req.body;
     locationModel.updateLocation(req.params.id, payLoad, (err, result)=>{
         if(err){
@@ -29,7 +30,7 @@ Router.post("/location/:id", (req, res)=>{
 });
 
 //Create new location API
-Router.post("/location/create", (req, res)=>{
+Router.post("/create", (req, res)=>{
     const payLoad = req.body;
     locationModel.createLocation(payLoad, (err, result)=>{
         if(err){

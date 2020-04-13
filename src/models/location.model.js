@@ -13,7 +13,7 @@ const geoCoder = nodeGeocoder(options);
 //Get the location details of a user
 //Inputs userID and a callback function
 const getLocation = function (userID, callback){
-    let sql = `SELECT address_line_1, address_line_2, address_line_3, city, state, country, zipcode FROM user, address WHERE address.id = user.address_id_fk and user.id = ${userID}`;
+    let sql = `SELECT address_type, address_line_1, address_line_2, address_line_3, city, state, country, zipcode FROM user, address WHERE address.id = user.address_id_fk and user.id = ${userID}`;
     mysqlConnection.query(sql,(err, result)=>{
         if(err){
             return callback(err);
@@ -60,7 +60,7 @@ const getZipCode = function(userID, callback){
             return callback(err);
         } 
         //console.log(result[0].zipcode);
-        return callback(result[0].zipCode);
+        return callback(result);
     });
 };
 
