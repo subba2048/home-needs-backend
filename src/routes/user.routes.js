@@ -7,7 +7,7 @@ const userSchema = require("../schema/user.schema");
 Router.get("/",(req, res, next)=>{
     userModel.getUsers(function(err,rows){
         if(!err)
-        res.send(rows);
+        res.send(null,rows);
         else
         res.send(err);
         // rows.forEach( (row) => {
@@ -17,9 +17,9 @@ Router.get("/",(req, res, next)=>{
 )});
 //Get single user by ID
 Router.get("/:id",(req,res, next)=>{
-    userModel.getUser(req.params.id,function(err,rows){
+    userModel.getUserByID(req.params.id,function(err,rows){
         if(!err)
-        res.send(rows);
+        res.send(null,rows);
         else
         res.send(err);
     })
@@ -30,7 +30,7 @@ Router.post("/update/:id",(req,res,next)=>{
     const payLoad = req.body;
     userModel.updateUser(req.params.id,payLoad,function(err,rows){
         if(!err)
-        res.send(rows);
+        res.send(null,rows);
         else
         res.send(err);
     })
@@ -42,7 +42,7 @@ Router.post("/create",(req,res, next)=>{
         payLoad['user_since'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
     userModel.createUser(payLoad,function(err,rows){
         if(!err){
-            res.send(rows);
+            res.send(null,rows);
         }
         else{
             res.send(err);
@@ -53,7 +53,7 @@ Router.post("/create",(req,res, next)=>{
 Router.delete("/:id",(req,res,next)=>{
     userModel.deleteUser(req.params.id,function(err,rows){
         if(!err){
-            res.send(rows);
+            res.send(null,rows);
         }
         else{
             res.send(err);

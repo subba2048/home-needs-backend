@@ -1,5 +1,6 @@
 const mysqlConnection = require("../../connection");
 
+//create joins with fks
 const getUsers = function(callback){
     mysqlConnection.query("select * from user;",(err, rows, fields)=>{
         if(err) return callback(err);
@@ -7,7 +8,8 @@ const getUsers = function(callback){
     });
 };
 
-const getUser = function(userID,callback){
+//create joins with fks
+const getUserByID = function(userID,callback){
     mysqlConnection.query("select * from user where id = "+userID+";",(err, rows, fields)=>{
         if(!err){
             return callback(null,rows);
@@ -59,7 +61,7 @@ const createUser = function(payLoad,callback){
 
 module.exports = {
     getUsers: getUsers,
-    getUser: getUser,
+    getUserByID: getUserByID,
     deleteUser: deleteUser,
     updateUser: updateUser,
     createUser: createUser
