@@ -4,6 +4,7 @@ const usersRouter = require('./user.routes');
 const loginRouter = require('./login.routes');
 const locationRouter = require('./location.routes');
 const scheduleRouter = require('./schedule.routes');
+const servicesRouter = require('./services.routes');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -15,6 +16,7 @@ router.use('/users',usersRouter);
 router.use('/login',usersRouter);
 router.use('/location',locationRouter);
 router.use('/schedule',usersRouter);
+router.use('/services',servicesRouter);
 
 
 module.exports = router;
