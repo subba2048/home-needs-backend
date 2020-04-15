@@ -1,9 +1,9 @@
 const express = require("express");
 const Router = express.Router();
-const scheduleModel = require("../models/schedule.model");
+const scheduleModel = require("../models/SOSchedule.model");
 
 Router.get("/", (req, res, next) => {
-    scheduleModel.getSRSchedule(function(err,rows) {
+    scheduleModel.getSOSchedule(function(err,rows) {
      if (!err)
      res.send(rows);
      else 
@@ -14,7 +14,7 @@ Router.get("/", (req, res, next) => {
 
     Router.post("/update/:id",(req,res,next) => {
         const payload = req.body;
-        scheduleModel.updateSRSchedule(req.params.id,payload,function(err,rows) {
+        scheduleModel.updateSOSchedule(req.params.id,payload,function(err,rows) {
             if (!err)
             res.send(rows);
             else 
@@ -24,7 +24,7 @@ Router.get("/", (req, res, next) => {
 
     Router.post("/create/:id", (req,res,next) => {
         const payload = req.body; 
-        scheduleModel.createSRSchedule(payload, function(err,rows) {
+        scheduleModel.createSOSchedule(payload, function(err,rows) {
             if (!err) {
             res.send(rows);
             
