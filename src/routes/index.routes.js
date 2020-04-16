@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.use('/users',usersRouter);
-router.use('/login',usersRouter);
+router.use('/login',loginRouter);
 router.use('/location',locationRouter);
 router.use('/schedule',scheduleRouter);
 router.use('/SOSchedule',SOScheduleRouter);

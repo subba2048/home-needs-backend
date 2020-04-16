@@ -1,5 +1,19 @@
 const mysqlConnection = require("../../connection");
 
+const authenticateUser = function(payLoad, callback){
+    const email = payLoad['email'];
+    const password = payLoad['password'];
+
+    const query = "select * from login where email = '"+email+"' and password = '"+password+"';";
+    mysqlConnection.query(query,(err, rows, fields)=>{
+        if(!err){
+            return callback(null,rows);
+        }else{
+            return callback(err);
+        }
+    })
+}
+
 const getLoginByUserID = function(userID,callback){
     mysqlConnection.query("select * from login where id = "+userID+";",(err, rows, fields)=>{
         if(!err){
@@ -49,6 +63,7 @@ const createLogin = function(payLoad,callback){
 
 
 module.exports = {
+    authenticateUser: authenticateUser,
     getLoginByUserID: getLoginByUserID,
     updatePassword: updatePassword,
     createLogin: createLogin

@@ -4,9 +4,13 @@ const Router = express.Router();
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 
+const loginModel = require('../models/login.model');
+const userModel = require('../models/user.model');
+
 Router.use(cors());
 process.env.SECRET_KEY = 'secret';
 
+// const jwtKey = 'my_secret_key'
 
 Router.post('/register', (req, res) => {
   const today = new Date()
@@ -46,45 +50,55 @@ Router.post('/register', (req, res) => {
 })
 
 Router.post('/login', (req, res) => {
-  User.findOne({
-    where: {
-      email: req.body.email,
-      password: req.body.password
+  loginModel.authenticateUser(req.body,(err, result)=>{
+    if(err){
+      res.send('Error: ' + err)
     }
-  })
-    .then(user => {
-      if (user) {
-        let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
+    else{
+      let userExists = false;
+      if(result.length>0)
+        userExists = true;
+      if (userExists) {
+        const responsePayload = JSON.parse(JSON.stringify(result[0]));
+        const token = jwt.sign(responsePayload, process.env.SECRET_KEY, {
+          algorithm: 'HS256',
           expiresIn: 1440
         })
+        console.log('token:', token)
         res.json({ token: token })
       } else {
-        res.send('User does not exist')
+        res.send({dataError:'User does not exist'});
       }
-    })
-    .catch(err => {
-      res.send('error: ' + err)
-    })
+    }
+    
+  });
 })
 
 Router.get('/profile', (req, res) => {
-  var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY)
 
-  User.findOne({
-    where: {
-      id: decoded.id
+  try {
+    var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY);
+  }
+  catch (ex) { res.error(ex.message); 
+  }
+  
+  var userID = decoded['user_id_fk'];
+
+  userModel.getUserByID(userID,(err, result)=>{
+    if(err){
+      res.send('Error: ' + err)
+    }
+    else{
+      let userExists = false;
+      if(result.length>0)
+        userExists = true;
+      if (userExists) {
+        res.json(result[0]);
+      }else {
+        res.send({dataError:'User does not exist'});
+      }
     }
   })
-    .then(user => {
-      if (user) {
-        res.json(user)
-      } else {
-        res.send('User does not exist')
-      }
-    })
-    .catch(err => {
-      res.send('error: ' + err)
-    })
 })
 
 module.exports = Router;
