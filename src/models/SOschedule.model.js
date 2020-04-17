@@ -17,8 +17,9 @@ const createSOSchedule = function(payload, callback) {
             return callback(null,inid);
     } else {
         return callback(err);
-    }
-});
+	}
+    })
+};
 //allows for the update of a service offer schedule
 const updateSOSchedule = function (SO_scheduleID,payload,callback){
     const name = payload['name'];
@@ -40,4 +41,4 @@ module.exports = {
  getSOSchedule: getSOSchedule,
  createSOSchedule: createSOSchedule,
  updateSOSchedule: updateSOSchedule
-}};
+};

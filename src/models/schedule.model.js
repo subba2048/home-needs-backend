@@ -17,8 +17,9 @@ const createSRSchedule = function (payload,callback) {
             return callback(null,inid);
     } else {
         return callback(err);
-    }
-});
+	}
+    })
+};
 
 
 //update a service request schedule
@@ -47,4 +48,4 @@ module.exports = {
     createSRSchedule :createSRSchedule,
     updateSRSchedule: updateSRSchedule
 
-}};
+};
