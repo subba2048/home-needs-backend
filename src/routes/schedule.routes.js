@@ -24,6 +24,7 @@ Router.get("/", (req, res, next) => {
 
     Router.post("/create/:id", (req,res,next) => {
         const payload = req.body; 
+        console.log("testinggithub")
         scheduleModel.createSRSchedule(payload, function(err,rows) {
             if (!err) {
             res.send(rows);
