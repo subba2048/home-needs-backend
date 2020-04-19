@@ -1,51 +1,45 @@
-const mysqlConnnection = require("../../connection");
+const mysqlConnection = require("../../connection");
 
-//retrieve the schedule
-const getSRSchedule = function (callback) {
-    mysqlConnnection.query("select * from  sr_schedule", (err, rows, fields) => {
-        if(!err) return callback(err);
-        return callback(null, rows);
+const getsrschedule = function(callback){
+    mysqlConnection.query("select * from sr_schedule; ",(err, rows, fields)=>{
+        if(err) return callback(err);
+        return callback(null,rows);
     });
 };
-//create a service request schedule
-const createSRSchedule = function (payload,callback) {
-    const schquery = "Insert into SR_Schedule (service_request_id_fk, date_requested, time_requested, frequency) values ('"+payload['service_request_id_fk']+"', '"+payload['date_requested']+"', '"+payload['time_requested']+"', '"+payload['frequency']+"' );";
-    mysqlConnnection.query (schquery,(err, rows, fields) => {
-        if (!err) {
-            var inid = {inid: rows.inid};
-            console.log('Last insert ID:', rows.inid);
-            return callback(null,inid);
-    } else {
-        return callback(err);
-	}
-    })
-};
 
 
-//update a service request schedule
-const updateSRSchedule = function (SR_scheduleID,payload,callback){
-    const name = payload['name'];
-    const upval = payload['upval'];
-    const updquery = "Update SR_schedule set "+name+" ='"+upval+"' where ID = "+SR_scheduleID+"; ";
-    mysqlConnnection.query(updquery,(err,rows,fields) => {
+
+
+const updatesrschedule = function(sr_requestID,payLoad,callback){
+    const column = payLoad['column'];
+    const upval = payLoad['upval'];
+    const sql = "update sr_schedule set "+column+" = '"+upval+"' where ID = "+sr_requestID+";";
+    mysqlConnection.query(sql,(err, rows, fields)=>{
         if(!err){
-            console.log( 'Changed ${rows.changedRows} row(s)' );
-            return callback(null,rows);
-
-        }
-        else {
+            console.log (`Changed ${rows.changedRows} row(s)`)
+           return callback(null,rows);
+        }else{
             return callback(err);
         }
-    })
+    });
 };
 
+const createsrschedule = function(payLoad,callback){
+    const sqlq = "insert into sr_schedule (service_request_id_fk, date_requested, time_requested, frequency) values ('"+payLoad['service_request_id_fk']+"', '"+payLoad['date_requested']+"', '"+payLoad['time_requested']+"', '"+payLoad['frequency']+"' );";
+    mysqlConnection.query(sqlq,(err, rows, fields)=>{
+        if(!err){
+            var insertId = { insertId: rows.insertId};
+            console.log('Last insert ID:', rows.insertId);
+            return callback(null,insertId);
+        }else{
+            return callback(err);
+        }
+    });
+};
 
-
-
-//export the modules
 module.exports = {
-    getSRSchedule: getSRSchedule,
-    createSRSchedule :createSRSchedule,
-    updateSRSchedule: updateSRSchedule
+    getsrschedule: getsrschedule,
+    createsrschedule: createsrschedule,
+    updatesrschedule: updatesrschedule
 
 };
