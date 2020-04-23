@@ -16,7 +16,7 @@ Router.get("/",(req, res, next)=>{
 )});
 //Get services by parentID
 Router.get("/:id",(req,res, next)=>{
-    servicesModel.getUserByCategory(req.params.id,function(err,rows){
+    servicesModel.getChildServices(req.params.id,function(err,rows){
         if(!err)
         res.send(rows);
         else

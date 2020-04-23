@@ -36,7 +36,7 @@ const getServices = function(callback){
 //         });
 // }
 
-const getUserByCategory = function(parentID,callback){
+const getChildServices = function(parentID,callback){
     mysqlConnection.query("select * from services where services_id_parent_fk = "+parentID+";",(err, rows, fields)=>{
         if(!err){
             return callback(null,rows);
@@ -48,5 +48,5 @@ const getUserByCategory = function(parentID,callback){
 
 module.exports = {
     getServices: getServices,
-    getUserByCategory: getUserByCategory
+    getChildServices: getChildServices
 };

@@ -38,6 +38,21 @@ const updatePassword = function(loginID,payLoad,callback){
     })
 };
 
+const canCreateLogin = function(email,callback){
+    return new Promise(function(resolve, reject) {
+        mysqlConnection.query("select * from login where email = "+email+";",(err, rows, fields)=>{
+            if(!err){
+                if(rows.length>0)
+                    resolve(false);
+                else
+                    resolve(true);
+            }else{
+                reject(Error(err));
+            }
+        })
+      });
+};
+
 const createLogin = function(payLoad,callback){
     var keys = Object.keys(payLoad);
     var colums = "", values ="";
@@ -63,6 +78,7 @@ const createLogin = function(payLoad,callback){
 
 
 module.exports = {
+    canCreateLogin: canCreateLogin,
     authenticateUser: authenticateUser,
     getLoginByUserID: getLoginByUserID,
     updatePassword: updatePassword,

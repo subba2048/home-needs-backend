@@ -11,7 +11,7 @@ Router.use(cors());
 process.env.SECRET_KEY = 'secret';
 
 // const jwtKey = 'my_secret_key'
-
+//NEED TO CHANGE
 Router.post('/register', (req, res) => {
   const today = new Date()
   const userData = {
@@ -32,7 +32,11 @@ Router.post('/register', (req, res) => {
       if (!user) {
         User.create(userData)
           .then(user => {
-            let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
+            // let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
+            //   expiresIn: 1440
+            // })
+            const token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
+              algorithm: 'HS256',
               expiresIn: 1440
             })
             res.json({ token: token })
@@ -102,34 +106,3 @@ Router.get('/profile', (req, res) => {
 })
 
 module.exports = Router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// var promise = new Promise(function(resolve, reject) {
-//     // do a thing, possibly async, then…
-  
-//     if (true) {
-//       resolve("Stuff worked!");
-//     }
-//     else {
-//       reject(Error("It broke"));
-//     }
-//   });
