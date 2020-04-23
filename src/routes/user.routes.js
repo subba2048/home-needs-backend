@@ -5,6 +5,7 @@ const userSchema = require("../schema/user.schema");
 const loginModel = require("../models/login.model");
 const addModel = require('../models/address.model');
 const customerModel = require("../models/customer.model");
+const phoneNumberModel = require('../models/phoneNumber.model');
 const stripe = require("../shared/stripe");
 
 const cors = require('cors');
@@ -145,6 +146,18 @@ Router.post("/register/customer",(req,res, next)=>{
             })
           });
 
+    })
+    .then(function(rows){
+        return new Promise((resolve, reject) => {
+            phoneNumberModel.createPhoneNumber(payLoad,function(err,rows){
+                if(!err){
+                    resolve(rows);
+                }
+                else{
+                    reject(err);
+                }
+            })
+          });
     })
     .then(function(rows){
         //create stripe user
