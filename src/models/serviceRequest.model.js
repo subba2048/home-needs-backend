@@ -1,7 +1,7 @@
 const mysqlConnection = require("../../connection");
 
-const getAddressByID = function(ID,callback){
-    mysqlConnection.query("select * from address where id = "+ID+";",(err, rows, fields)=>{
+const getServiceRequestByCustID = function(custID,callback){
+    mysqlConnection.query("select * from service_request where customer_id_fk = "+custID+";",(err, rows, fields)=>{
         if(!err){
             return callback(null,rows);
         }else{
@@ -11,7 +11,7 @@ const getAddressByID = function(ID,callback){
 };
 
 
-const createAddress = function(payLoad,callback){
+const createServiceRequest = function(payLoad,callback){
     var keys = Object.keys(payLoad);
     var colums = "", values ="";
     keys.forEach(key => {
@@ -21,7 +21,7 @@ const createAddress = function(payLoad,callback){
     colums = colums.substring(0, colums.length - 1);
     values = values.substring(0, values.length - 1);
 
-    const sqlQuery = "insert into address ("+colums+") values ("+values+");";
+    const sqlQuery = "insert into service_request ("+colums+") values ("+values+");";
 
     mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
         if(!err){
@@ -36,6 +36,6 @@ const createAddress = function(payLoad,callback){
 
 
 module.exports = {
-    getAddressByID: getAddressByID,
-    createAddress: createAddress
+    getServiceRequestByCustID: getServiceRequestByCustID,
+    createServiceRequest: createServiceRequest
 }

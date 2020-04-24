@@ -7,6 +7,7 @@ const scheduleRouter = require('./schedule.routes');
 const SOScheduleRouter = require('./SOSchedule.routes');
 const servicesRouter = require('./services.routes');
 const matchingRouter = require('./matching.routes');
+const srRouter = require('./serviceRequest.routes');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -21,6 +22,7 @@ router.use('/schedule',scheduleRouter);
 router.use('/SOSchedule',SOScheduleRouter);
 router.use('/services',servicesRouter);
 router.use('/quotes',matchingRouter);
+router.use('/servicerequest',srRouter);
 
 
 

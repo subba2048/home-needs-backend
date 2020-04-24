@@ -47,12 +47,12 @@ const createPhoneNumber = function(payLoad,callback){
         if(err)
             return callback(err);
 
-        const phone_number_type_id_fk =  typeRows['id'];
+        const phone_number_type_id_fk =  typeRows[0]['id'];
         const sqlQuery = "insert into phone_number (user_id_fk, phone_number_type_id_fk, phone_number) values ("+userIDFK+", "+phone_number_type_id_fk+", '"+phoneNumber+"');";
         mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
             if(!err){
-                var insertId = {insertId: rows.insertId};
-                console.log('Last insert ID:', rows.insertId);
+                var insertId = rows.insertId+'';
+                console.log('Last insert ID:', insertId);
                 return callback(null,insertId);
             }else{
                 return callback(err);

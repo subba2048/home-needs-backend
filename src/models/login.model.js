@@ -40,14 +40,14 @@ const updatePassword = function(loginID,payLoad,callback){
 
 const canCreateLogin = function(email,callback){
     return new Promise(function(resolve, reject) {
-        mysqlConnection.query("select * from login where email = "+email+";",(err, rows, fields)=>{
+        mysqlConnection.query("select * from login where email = '"+email+"';",(err, rows, fields)=>{
             if(!err){
                 if(rows.length>0)
                     resolve(false);
                 else
                     resolve(true);
             }else{
-                reject(Error(err));
+                reject(err);
             }
         })
       });
@@ -67,8 +67,8 @@ const createLogin = function(payLoad,callback){
 
     mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
         if(!err){
-            var insertId = {insertId: rows.insertId};
-            console.log('Last insert ID:', rows.insertId);
+            var insertId = rows.insertId+'';
+            console.log('Last insert ID:', insertId);
             return callback(null,insertId);
         }else{
             return callback(err);

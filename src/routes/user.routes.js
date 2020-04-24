@@ -75,7 +75,7 @@ Router.post("/register/customer",(req,res, next)=>{
     .then(function(result){
         return new Promise((resolve, reject) => {
             if(result == false)
-                reject(Error({dataError:'User already exists!'}));
+                reject({dataError:'User already exists!'});
             else{
 
                 //create user
@@ -116,7 +116,7 @@ Router.post("/register/customer",(req,res, next)=>{
         var addressPayload = {
             address_line_1: payLoad['user_address_line_1'],
             address_line_2: payLoad['user_address_line_2'],
-            address_type : 'user',
+            address_type : 'home',
             city: payLoad['user_city'],
             country: 'United States',
             state: payLoad['user_state'],
@@ -182,9 +182,9 @@ Router.post("/register/customer",(req,res, next)=>{
             user_id_fk: payLoad['user_id_fk']
         };
         return new Promise((resolve, reject) => {
-            customerModel.createCustomer(customerPayload,function(err,rows){
+            customerModel.createCustomer(customerPayload,function(err,customerID){
                 if(!err){
-                    resolve(rows);
+                    resolve(customerID);
                 }
                 else{
                     reject(err);
@@ -192,8 +192,8 @@ Router.post("/register/customer",(req,res, next)=>{
             })
           });
     })
-    .then(function(rows){
-        res.send(rows);
+    .then(function(customerID){
+        res.json({userID: payLoad['user_id_fk'],customerID: customerID});
     })
     .catch(function(error) {
         console.log("Failed!", error);

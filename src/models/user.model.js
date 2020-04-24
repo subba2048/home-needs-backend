@@ -79,8 +79,8 @@ const createUser = function(payLoad,callback){
     const sqlQuery = "insert into user (first_name, middle_name, last_name, user_type, status, user_since) values ('"+payLoad['first_name']+"','"+payLoad['middle_name']+"','"+payLoad['last_name']+"','"+payLoad['user_type']+"','"+payLoad['status']+"','"+payLoad['user_since']+"');";
     mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
         if(!err){
-            var insertId = { insertId: rows.insertId};
-            console.log('Last insert ID:', rows.insertId);
+            var insertId = rows.insertId+'';
+            console.log('Last insert ID:', insertId);
             return callback(null,insertId);
         }else{
             return callback(err);

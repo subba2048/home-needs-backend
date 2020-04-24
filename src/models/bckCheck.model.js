@@ -37,8 +37,8 @@ const createBckInfo = function(payLoad,callback){
         const sqlQuery = "insert into bck_check_info (ssn, bck_id_type_id_fk, bck_id_number, user_id_fk) values ('"+ssn+"', "+bck_id_type_id_fk+", '"+bck_id_number+"', "+userIDFK+");";
         mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
             if(!err){
-                var insertId = {insertId: rows.insertId};
-                console.log('Last insert ID:', rows.insertId);
+                var insertId = rows.insertId+'';
+                console.log('Last insert ID:', insertId);
                 return callback(null,insertId);
             }else{
                 return callback(err);

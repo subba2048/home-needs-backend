@@ -23,7 +23,7 @@ Router.get("/", (req, res,next) => {
         })
     });
     //router
-    Router.post("/create/:id", (req,res,next) => {
+    Router.post("/create", (req,res,next) => {
         const payload = req.body; 
         scheduleModel.createsrschedule(payload, function(err,rows) {
             if (!err) {

@@ -1,4 +1,4 @@
-const stripe = require('stripe')('pk_test_4nPehc8vZrCWL72wwGn9CVUF00RbQ6FyD1');
+const stripe = require('stripe')('sk_test_NRvYvirXBcxz3YjC5HPc0hL200djInxiBv');
 
 // Create a Customer:
 const createCustomer = function(email,token,callback){

@@ -28,8 +28,8 @@ const createsrschedule = function(payLoad,callback){
     const sqlq = "insert into sr_schedule (service_request_id_fk, date_requested, time_requested, frequency) values ('"+payLoad['service_request_id_fk']+"', '"+payLoad['date_requested']+"', '"+payLoad['time_requested']+"', '"+payLoad['frequency']+"' );";
     mysqlConnection.query(sqlq,(err, rows, fields)=>{
         if(!err){
-            var insertId = { insertId: rows.insertId};
-            console.log('Last insert ID:', rows.insertId);
+            var insertId = rows.insertId+'';
+            console.log('Last insert ID:', insertId);
             return callback(null,insertId);
         }else{
             return callback(err);
