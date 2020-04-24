@@ -2,9 +2,8 @@ const mysqlConnection = require("../../connection");
 
 const authenticateUser = function(payLoad, callback){
     const email = payLoad['email'];
-    const password = payLoad['password'];
 
-    const query = "select * from login where email = '"+email+"' and password = '"+password+"';";
+    const query = "select * from login where email = '"+email+"';";
     mysqlConnection.query(query,(err, rows, fields)=>{
         if(!err){
             return callback(null,rows);

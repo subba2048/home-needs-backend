@@ -3,6 +3,7 @@ const express = require("express");
 const Router = express.Router();
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const loginModel = require('../models/login.model');
 const userModel = require('../models/user.model');
@@ -62,15 +63,24 @@ Router.post('/login', (req, res) => {
       let userExists = false;
       if(result.length>0)
         userExists = true;
+      
       if (userExists) {
         const responsePayload = JSON.parse(JSON.stringify(result[0]));
-        const token = jwt.sign(responsePayload, process.env.SECRET_KEY, {
-          algorithm: 'HS256',
-          expiresIn: 1440
-        })
-        console.log('token:', token)
-        res.json({ token: token })
-      } else {
+        const resultPassword = responsePayload['password'];
+        if(bcrypt.compareSync(req.body.password, resultPassword)){
+          const token = jwt.sign(responsePayload, process.env.SECRET_KEY, {
+            algorithm: 'HS256',
+            expiresIn: 1440
+          })
+          console.log('token:', token)
+          res.json({ token: token })
+        }
+        else {
+          //password does not match
+          res.send({dataError:'User does not exist'});
+        }
+      }else {
+        //email does not match
         res.send({dataError:'User does not exist'});
       }
     }
