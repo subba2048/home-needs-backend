@@ -8,6 +8,10 @@ const SOScheduleRouter = require('./SOSchedule.routes');
 const servicesRouter = require('./services.routes');
 const matchingRouter = require('./matching.routes');
 const srRouter = require('./serviceRequest.routes');
+const ratingRouter = require('./rating.routes');
+const SRLocationRouter = require('./SRLocation.routes');
+const SOLocationRouter = require('./SOLocation.routes');
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -23,7 +27,9 @@ router.use('/SOSchedule',SOScheduleRouter);
 router.use('/services',servicesRouter);
 router.use('/quotes',matchingRouter);
 router.use('/servicerequest',srRouter);
-
+router.use('/ratings', ratingRouter);
+router.use('/srlocation', SRLocationRouter);
+router.use('/solocation', SOLocationRouter);
 
 
 module.exports = router;
