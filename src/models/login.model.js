@@ -14,7 +14,7 @@ const authenticateUser = function(payLoad, callback){
 }
 
 const getLoginByUserID = function(userID,callback){
-    mysqlConnection.query("select * from login where id = "+userID+";",(err, rows, fields)=>{
+    mysqlConnection.query("select id,email from login where id = "+userID+";",(err, rows, fields)=>{
         if(!err){
             return callback(null,rows);
         }else{
