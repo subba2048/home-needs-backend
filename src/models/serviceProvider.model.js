@@ -18,7 +18,17 @@ const getServiceProviderByID = function(ID,callback){
 };
 
 const createServiceProvider = function(payLoad,callback){
-    const sqlQuery = "insert into service_provider (id, user_id_fk, Job_title, provides_emergency_service, do_not_disturb, licence_info_idlicence_info, is_verified) values (1, 2, 'House_cleaner', 1, 0, 1, 1);";
+    var keys = Object.keys(payLoad);
+    var colums = "", values ="";
+    keys.forEach(key => {
+        colums+=key+",";
+        values+="'"+payLoad[key]+"',";
+    });
+    colums = colums.substring(0, colums.length - 1);
+    values = values.substring(0, values.length - 1);
+
+    const sqlQuery = "insert into service_provider ("+colums+") values ("+values+");";
+    
     mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
         if(!err){
             var insertId = rows.insertId+'';
@@ -31,8 +41,22 @@ const createServiceProvider = function(payLoad,callback){
 };
 
 
+const updateLicenseInfo = function(spID,licenseID,callback){
+
+    const sqlQuery = "update service_provider set licence_info_idlicence_info = '"+licenseID+"' where id = "+spID+";";
+    mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
+        if(!err){
+            console.log(`Changed ${rows.changedRows} row(s)`);
+            return callback(null,rows);
+        }else{
+            return callback(err);
+        }
+    })
+};
+
 module.exports = {
     getServiceProviders: getServiceProviders,
     getServiceProviderByID: getServiceProviderByID,
-    createServiceProvider: createServiceProvider
+    createServiceProvider: createServiceProvider,
+    updateLicenseInfo: updateLicenseInfo
 };

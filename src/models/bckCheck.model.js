@@ -26,9 +26,8 @@ const deleteBckInfoByUserID = function(userID,callback){
 const createBckInfo = function(payLoad,callback){
     const userIDFK = payLoad['user_id_fk'];
     const ssn = payLoad['ssn'];
-    const bckIDType = payLoad['bck_id_type'];
+    const bckIDType = payLoad['bck_id_type_id_fk'];
     const bck_id_number = payLoad['bck_id_number'];
-
     getBckTypeFK(bckIDType,function(err,typeRows){
         if(err)
             return callback(err);
