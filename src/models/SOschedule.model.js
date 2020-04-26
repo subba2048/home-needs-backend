@@ -9,7 +9,7 @@ const getsoschedule = function(callback) {
 };
 //allows for the creation of a service offer schedule
 const createsoschedule = function(payLoad, callback) {
-    let spquery = "Insert into so_schedule (service_offer_id_fk, start_date, end_date, day, start_time, end_time) values ('"+payLoad['service_offer_id_fk']+"', '"+payLoad['start_date']+"', '"+payLoad['end_date']+"', '"+payLoad['day']+"', '"+payLoad['start_time']+"', '"+payLoad['end_time']+"'  );";
+    let spquery = "Insert into so_schedule (service_offer_id_fk, day, start_time, end_time) values ('"+payLoad['service_offer_id_fk']+"','"+payLoad['day']+"', '"+payLoad['start_time']+"', '"+payLoad['end_time']+"');";
     mysqlConnnection.query(spquery, (err,rows,fields) => {
         if (!err) {
             var inid = {inid: rows.inid};

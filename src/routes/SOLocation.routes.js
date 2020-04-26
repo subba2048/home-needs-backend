@@ -22,9 +22,10 @@ Router.get("/:spid", (req, res)=>{
 });
 
 //Create new service request location 
-Router.post("/create/:spid", (req, res)=>{
+Router.post("/create", (req, res)=>{
     const payLoad = req.body;
-    SOLocationModel.createSOLocation(req.params.spid, payLoad, (err, result)=>{
+    const SPID = payLoad['SPID'];
+    SOLocationModel.createSOLocation(SPID, payLoad, (err, result)=>{
         if(err){
             res.send(err);
         }
