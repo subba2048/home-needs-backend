@@ -23,9 +23,10 @@ Router.get("/:srid", (req, res)=>{
 });
 
 //Create new service request location 
-Router.post("/create/:srid", (req, res)=>{
+Router.post("/create", (req, res)=>{
     const payLoad = req.body;
-    SRLocationModel.createSRLocation(req.params.srid, payLoad, (err, result)=>{
+    const SRID = payLoad['SRID'];
+    SRLocationModel.createSRLocation(SRID, payLoad, (err, result)=>{
         if(err){
             res.send(err);
         }
