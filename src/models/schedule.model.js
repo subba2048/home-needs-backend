@@ -25,7 +25,7 @@ const updatesrschedule = function(sr_requestID,payLoad,callback){
 };
 
 const createsrschedule = function(payLoad,callback){
-    const sqlq = "insert into sr_schedule (service_request_id_fk, date_requested, time_requested, frequency) values ('"+payLoad['service_request_id_fk = 0']+"', '"+payLoad['Year: , Month: , Day:']+"', '"+payLoad['hour: minute: second:']+"', '"+payLoad['frequency']+"' );";
+    const sqlq = "insert into sr_schedule (service_request_id_fk, date_requested, time_requested, frequency) values ('"+payLoad['service_request_id_fk']+"', '"+payLoad['date_requested']+"', '"+payLoad['time_requested']+"', '"+payLoad['frequency']+"' );";
     mysqlConnection.query(sqlq,(err, rows, fields)=>{
         if(!err){
             var insertId = rows.insertId+'';
