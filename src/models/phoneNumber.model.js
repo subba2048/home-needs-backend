@@ -55,6 +55,7 @@ const createPhoneNumber = function(payLoad,callback){
                 console.log('Last insert ID:', insertId);
                 return callback(null,insertId);
             }else{
+                err['displayMessage'] = 'Invalid Phone Number: This phone number is already registered!';
                 return callback(err);
             }
         })

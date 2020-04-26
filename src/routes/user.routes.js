@@ -3,7 +3,7 @@ const Router = express.Router();
 const userModel = require("../models/user.model");
 const userSchema = require("../schema/user.schema");
 const loginModel = require("../models/login.model");
-const addModel = require('../models/address.model');
+const locationModel = require('../models/location.model');
 const customerModel = require("../models/customer.model");
 const phoneNumberModel = require('../models/phoneNumber.model');
 const bckInfoModel = require('../models/bckCheck.model');
@@ -126,7 +126,7 @@ Router.post("/register/customer",(req,res, next)=>{
             zipcode: payLoad['user_zipcode']
         };
         return new Promise((resolve, reject) => {
-            addModel.createAddress(addressPayload,function(err,rows){
+            locationModel.createLocation(addressPayload,function(err,rows){
                 if(!err){
                     resolve(rows);
                 }
@@ -216,7 +216,7 @@ Router.post("/register/sp",(req,res, next)=>{
     .then(function(result){
         return new Promise((resolve, reject) => {
             if(result == false)
-                reject({dataError:'User already exists!'});
+                reject({dataError:'User with this email already exists!'});
             else{
 
                 //create user
@@ -263,8 +263,9 @@ Router.post("/register/sp",(req,res, next)=>{
             state: payLoad['user_state'],
             zipcode: payLoad['user_zipcode']
         };
+        
         return new Promise((resolve, reject) => {
-            addModel.createAddress(addressPayload,function(err,rows){
+            locationModel.createLocation(addressPayload,function(err,rows){
                 if(!err){
                     resolve(rows);
                 }
@@ -341,7 +342,7 @@ Router.post("/register/sp",(req,res, next)=>{
         };
         // id, user_id_fk, job_title, provides_emergency_service, do_not_disturb, licence_info_idlicence_info, is_verified
         return new Promise((resolve, reject) => {
-            serviceProviderModel.createServiceProvider(serviceProviderPayload,function(err,customerID){
+            serviceProviderModel.createServiceProvider(serviceProviderPayload,function(err,serviceProviderID){
                 if(!err){
                     resolve(serviceProviderID);
                 }
@@ -365,7 +366,7 @@ Router.post("/register/sp",(req,res, next)=>{
             valid_upto: toDate
         };
         return new Promise((resolve, reject) => {
-            licenseInfoModel.createLicenseInfo(payLoad,function(err,rows){
+            licenseInfoModel.createLicenseInfo(licencePayload,function(err,licenseID){
                 if(!err){
                     resolve(licenseID);
                 }
@@ -388,7 +389,7 @@ Router.post("/register/sp",(req,res, next)=>{
             })
           });
     })
-    .then(function(customerID){
+    .then(function(rows){
         res.json({userID: payLoad['user_id_fk'],serviceProviderID: payLoad['serviceProviderID']});
     })
     .catch(function(error) {

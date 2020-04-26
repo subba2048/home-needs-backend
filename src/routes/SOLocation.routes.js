@@ -1,6 +1,6 @@
 const express = require("express");
 const Router = express.Router();
-const SOLocationModel = require('../models/SOLocation.model');
+const SOLocationModel = require('../models/SOlocation.model');
 
 //modify the index.routes.js with
 /*

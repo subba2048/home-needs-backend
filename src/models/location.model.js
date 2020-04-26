@@ -51,22 +51,25 @@ const createLocation = (payLoad, callback)=>{
     let address = {
         address_line_1: payLoad.address_line_1,
         address_line_2: payLoad.address_line_2,
-        address_line_3: payLoad.address_line_3,
         addres_type: payLoad.address_type,
         city: payLoad.city,
         state: payLoad.state,
         zipcode: payLoad.zipcode,
         country: payLoad.country
     };
-    getLongLat(address)
+    var locMod = {address: address.city+', '+address.state+', '+address.zipcode+', '+'USA'};
+
+    getLongLat(locMod)
         .then((point)=>{
-            let sql = `INSERT INTO address (address_type, address_line_1, address_line_2, address_line_3, city, state, country, zipcode, latitude, longitude) VALUES ('${payLoad.address_type}', '${payLoad.address_line_1}', '${payLoad.address_line_2}', '${payLoad.address_line_3}', '${payLoad.city}', '${payLoad.state}', '${payLoad.country}', '${payLoad.zipcode}', ${point.latitude}, ${point.longitude})`;
+            let sql = `INSERT INTO address (address_type, address_line_1, address_line_2, city, state, country, zipcode, latitude, longitude) VALUES ('${payLoad.address_type}', '${payLoad.address_line_1}', '${payLoad.address_line_2}','${payLoad.city}', '${payLoad.state}', '${payLoad.country}', '${payLoad.zipcode}', ${point.latitude}, ${point.longitude})`;
             mysqlConnection.query(sql,(err, result)=>{
                 if(err){
                     return callback(err);
                  }
                 //console.log(result);
-                return callback(result);
+                var insertId = result.insertId+'';
+                console.log('Last insert ID:', insertId);
+                return callback(null,insertId);
             });
         })
         .catch((error)=>{
