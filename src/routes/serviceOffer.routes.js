@@ -22,7 +22,7 @@ Router.post("/create", (req, res)=>{
     var serviceIDArray = [];
     var errExists= false;
     var errValue;
-    const totalCalls = 0;
+    var totalCalls = 0;
     for(var i=0;i<payLoad_array.length; i++){
         serviceOfferModel.createServiceOfferAndSchedule(payLoad_array[i], (err, result)=>{
             if(err){
@@ -30,16 +30,16 @@ Router.post("/create", (req, res)=>{
                 errValue = err;
             }
             else{
-                serviceIDArray.push(result);
+                serviceIDArray.push(result[0]);
             }
             totalCalls++;
+            if(totalCalls == payLoad_array.length){
+                if(errExists)
+                    res.send(err);
+                else
+                    res.send({serviceOfferIDArray: serviceIDArray});
+            }
         });
-    }
-    if(totalCalls == payLoad_array.length){
-        if(errExists)
-            res.send(err);
-        else
-            res.send(serviceIDArray);
     }
 });
 

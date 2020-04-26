@@ -26,13 +26,8 @@ const deleteBckInfoByUserID = function(userID,callback){
 const createBckInfo = function(payLoad,callback){
     const userIDFK = payLoad['user_id_fk'];
     const ssn = payLoad['ssn'];
-    const bckIDType = payLoad['bck_id_type_id_fk'];
+    const bck_id_type_id_fk = payLoad['bck_id_type_id_fk'];
     const bck_id_number = payLoad['bck_id_number'];
-    getBckTypeFK(bckIDType,function(err,typeRows){
-        if(err)
-            return callback(err);
-
-        const bck_id_type_id_fk =  typeRows['id'];
         const sqlQuery = "insert into bck_check_info (ssn, bck_id_type_id_fk, bck_id_number, user_id_fk) values ('"+ssn+"', "+bck_id_type_id_fk+", '"+bck_id_number+"', "+userIDFK+");";
         mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
             if(!err){
@@ -40,10 +35,10 @@ const createBckInfo = function(payLoad,callback){
                 console.log('Last insert ID:', insertId);
                 return callback(null,insertId);
             }else{
+                err['displayMessage'] = 'Error creating background check information!';
                 return callback(err);
             }
         })
-    })
 };
 
 const getBckTypeFK = function(type,callback){

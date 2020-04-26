@@ -9,12 +9,23 @@ const getsoschedule = function(callback) {
 };
 //allows for the creation of a service offer schedule
 const createsoschedule = function(payLoad, callback) {
+//     var records = [
+//         [1, 'Yashwant', 'Chavan'],
+//         [2, 'Diwakar', 'Patil'],
+//         [3, 'Anoop', 'More']
+// ];
+
+// var sql = "INSERT INTO trn_employee (employee_id, first_name, last_name) VALUES ?";
+
+// var query = connection.query(sql, [records], function(err, result) {
+// console.log(result);
+// });
     let spquery = "Insert into so_schedule (service_offer_id_fk, day, start_time, end_time) values ('"+payLoad['service_offer_id_fk']+"','"+payLoad['day']+"', '"+payLoad['start_time']+"', '"+payLoad['end_time']+"');";
-    mysqlConnnection.query(spquery, (err,rows,fields) => {
+    mysqlConnnection.query(spquery, (err,rows) => {
         if (!err) {
-            var inid = {inid: rows.inid};
-            console.log('Last insert ID:', rows.inid);
-            return callback(null,inid);
+            var insertId = rows.insertId+'';
+            console.log('Last insert ID:', insertId);
+            return callback(null,insertId);
     } else {
         return callback(err);
 	}

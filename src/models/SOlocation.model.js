@@ -1,5 +1,5 @@
 const mysqlConnection = require("../../connection");
-const addressModel = require('./address.model');
+const locationModel = require('./location.model');
 
 //get so_location by service provider id
 const getSOLocation = (SPID, callback)=>{
@@ -31,18 +31,19 @@ const createSOLocation = (SPID, payLoad, callback)=>{
         country:'United State',
         radius: payLoad.radius //radius is needed for the SO matching
     };
-    addressModel.createLocation(addressPayload, (err, addressID)=>{
+    
+    locationModel.createLocation(addressPayload, (err, addressID)=>{
         if(err){
             return callback(err);
         }
         let sql = `INSERT INTO so_location (address_id_fk, service_provider_id_fk, radius) VALUES (${addressID}, ${SPID}, ${addressPayload.radius})`;
-        mysqlConnection.query(sql, (err, result)=>{
+        mysqlConnection.query(sql, (err, rows)=>{
             if(err){
                 return callback(err);
             }
-            let insertID = result.insertID;
-            console.log('Record inserted in sr_location table, id: ', insertID);
-            return callback(insertID);
+            var insertId = rows.insertId+'';
+            console.log('Last inserted ID: ', insertId);
+            return callback(null,insertId);
         });
     });
 };
