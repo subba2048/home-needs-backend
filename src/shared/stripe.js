@@ -22,6 +22,37 @@ const createCustomer = function(email,token,callback){
       );
 };
 
+const createAccount = function(token,callback){
+  stripe.accounts.create({
+    country: 'US',
+    type: 'custom',
+    requested_capabilities: ['card_payments', 'transfers'],
+  },
+  function(err, account) {
+    // asynchronously called
+    if(err)
+      return callback(err);
+    else{
+      stripe.accounts.createExternalAccount(
+        account['id'],
+        {external_account: token},
+        function(err, card) {
+          // asynchronously called
+          if(err)
+            return callback(err);
+          else{
+            const returnObj = {
+              stripeAccountID: account['id'],
+              stripeCard: card['id']
+            };
+            return callback(null,returnObj);
+          }
+        }
+      );
+    }
+  });
+};
+
 
 // Charge the Customer instead of the card:
 // const charge = await stripe.charges.create({
@@ -52,5 +83,6 @@ const createCustomer = function(email,token,callback){
 //   );
 
 module.exports = {
-    createCustomer: createCustomer
+    createCustomer: createCustomer,
+    createAccount: createAccount
 };

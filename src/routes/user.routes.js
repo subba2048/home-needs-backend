@@ -316,28 +316,29 @@ Router.post("/register/sp",(req,res, next)=>{
             })
           });
     })
-       // .then(function(rows){
-    //     //create stripe user
-    //     return new Promise((resolve, reject) => {
-    //         stripe.createCustomer(payLoad['email'],payLoad['stripe_token'],function(err,stripeCustomerID){
-    //             if(!err){
-    //                 resolve(stripeCustomerID);
-    //             }
-    //             else{
-    //                 reject(err);
-    //             }
-    //         })
-    //       });
-    // })
-    .then(function(stripeCustomerID){
+       .then(function(rows){
+        //create stripe user
+        return new Promise((resolve, reject) => {
+            stripe.createAccount(payLoad['stripe_token'],function(err,result){
+                if(!err){
+                    resolve(result);
+                }
+                else{
+                    reject(err);
+                }
+            })
+          });
+    })
+    .then(function(result){
         //create service provider
         var serviceProviderPayload = {
             do_not_disturb: 0,
             is_verified: 1,
             provides_emergency_service: payLoad['provides_emergency_service'],
             job_title: '',
-            // stripe_customer_id: stripeCustomerID,
-            // stripe_token_id: payLoad['stripe_token'], 
+            stripe_account_id: result['stripeAccountID'],
+            stripe_card: result['stripeCard'],
+            stripe_token_id: payLoad['stripe_token'], 
             user_id_fk: payLoad['user_id_fk']
         };
         // id, user_id_fk, job_title, provides_emergency_service, do_not_disturb, licence_info_idlicence_info, is_verified

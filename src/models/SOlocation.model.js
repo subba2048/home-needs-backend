@@ -28,7 +28,7 @@ const createSOLocation = (SPID, payLoad, callback)=>{
         city: payLoad.service_city,
         state: payLoad.service_state,
         zipcode: payLoad.service_zipcode,
-        country:'United State',
+        country:'United States',
         radius: payLoad.radius //radius is needed for the SO matching
     };
     
