@@ -51,20 +51,20 @@ Router.post("/update/:id",(req,res,next)=>{
 })
 
 //DELETE LATER
-Router.post("/create",(req,res,next)=>{
-    const payLoad = req.body;
-    if(!payLoad['user_since'] || payLoad['user_since']=='')
-    payLoad['user_since'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    userModel.createUser(payLoad)
-    .then(function(rows) {
-        const userID = rows.insertId;
-        console.log("Success!", rows);
-        res.send(rows);
-      }).catch(function(error) {
-        console.log("Failed!", error);
-        res.send(rows);
-      })
-})
+// Router.post("/create",(req,res,next)=>{
+//     const payLoad = req.body;
+//     if(!payLoad['user_since'] || payLoad['user_since']=='')
+//     payLoad['user_since'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
+//     userModel.createUser(payLoad)
+//     .then(function(rows) {
+//         const userID = rows.insertId;
+//         console.log("Success!", rows);
+//         res.send(rows);
+//       }).catch(function(error) {
+//         console.log("Failed!", error);
+//         res.send(rows);
+//       })
+// })
 
 //Create customer API -NEED TO SAVE SERVICE ADDRESS
 Router.post("/register/customer",(req,res, next)=>{
