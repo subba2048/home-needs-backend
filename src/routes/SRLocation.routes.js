@@ -1,6 +1,6 @@
 const express = require("express");
 const Router = express.Router();
-const SRLocationModel = require('../models/SRLocation.model');
+const SRLocationModel = require('../models/SRlocation.model');
 
 
 //modify the index.routes.js with
