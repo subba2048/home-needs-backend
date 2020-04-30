@@ -14,6 +14,7 @@ const SRLocationRouter = require('./SRLocation.routes');
 const SOLocationRouter = require('./SOLocation.routes');
 const jobsRouter = require('./jobs.routes');
 const paymentsRouter = require('./payments.routes');
+const matchingRouter = require('./matching.routes');
 
 
 /* GET home page. */
@@ -36,6 +37,6 @@ router.use('/srlocation', SRLocationRouter);
 router.use('/solocation', SOLocationRouter);
 router.use('/jobs', jobsRouter);
 router.use('/payments', paymentsRouter);
-
+router.use('/matching', matchingRouter);
 
 module.exports = router;
