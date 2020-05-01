@@ -15,7 +15,8 @@ const getMatching = (payLoad)=>{
         const service_id = payLoad.service_id;
         const emergency = payLoad.emergency;
         const location = payLoad.location;
-        const schedule = payLoad.schedule;
+        const datePayload = payLoad.date;
+        const timePayload = payLoad.time;
         //check with which attributes needed for this join for quotes and jobs
         //user_id, service_request_id_fk, service_offer_id_fk, service_provider_name, service_title, price_range, job confirmed
         let sql = `SELECT user.id as user_id, service_offer.id as service_offer_id_fk, user.full_name as service_provider_name, title as service_title, price_range FROM user, address, services, service_provider, service_offer, so_location, so_schedule where user.id = service_provider.user_id_fk and address.id = user.address_id_fk and service_provider.id = service_offer.service_provider_id_fk and services.id = service_offer.services_id_fk and service_provider.id = so_location.service_provider_id_fk and service_offer.id = so_schedule.service_offer_id_fk and status = 'active' and available_to_match = 1 and do_not_disturb = 0 and services.id = ${service_id}`;
@@ -41,7 +42,7 @@ const getMatching = (payLoad)=>{
                         locationModel.distanceCalculation(point1, point2, (dist)=>{
                             console.log(dist)
                             //change 1500 to element.radius
-                            if (dist <= 1500){
+                            if (dist <= element.radius){
                                 screened.push(element);
                             }
                         });
@@ -51,11 +52,11 @@ const getMatching = (payLoad)=>{
                     //Add schedule part below it. I will be passing the array named as screened
                     //Time zone.
                     let j = new Array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT');
-                    let d = new Date(schedule['date'].year, schedule['date'].month - 1, schedule['date'].day);
+                    let d = new Date(datePayload.year, datePayload.month - 1, datePayload.day);
                     //schedule={date: {year: 2020, month: 4, day: 30}, time: {hour: 12, minute: 30, second: 0}, no_of_hours: 4};
                     //requested start and end time 
-                    let startTime = Date.parse('01/01/2020' + " " +schedule['time'].hour+":"+schedule['time'].minute+":"+schedule['time'].second);
-                    let endTime = Date.parse('01/01/2020' + " "+`${schedule['time'].hour + schedule['no_of_hours']}`+":"+schedule['time'].minute+":"+schedule['time'].second);
+                    let startTime = Date.parse('01/01/2020' + " " +timePayload.hour+":"+timePayload.minute+":"+timePayload.second);
+                    let endTime = Date.parse('01/01/2020' + " "+`${timePayload.hour + payLoad['no_of_hours']}`+":"+timePayload.minute+":"+timePayload.second);
                     //loop
                     let screened2 = [];
                     screened.forEach((item)=>{
