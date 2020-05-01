@@ -25,7 +25,7 @@ Router.post("/",(req,res, next)=>{
     // make call to matching model
     matchingModel.createQuote(payLoad, (err, result)=>{
         if(err){
-            res.send(error);
+            res.send(err);
         }
         else{
             //return matched array of objects

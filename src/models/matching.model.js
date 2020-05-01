@@ -10,8 +10,8 @@ const locationModel = require("./location.model");
 //location object {city: '', state: '', zipcode: }, emergency a boolean, callback function
 //add servicesid after the schedule matching part is done.
 
-const getMatching = (payLoad)=>{
-    return new Promise((resolve, reject)=>{
+const getMatching = (payLoad) => {
+    return new Promise((resolve, reject) => {
         const service_id = payLoad.service_id;
         const emergency = payLoad.emergency;
         const location = payLoad.location;
@@ -19,147 +19,169 @@ const getMatching = (payLoad)=>{
         const timePayload = payLoad.time;
         //check with which attributes needed for this join for quotes and jobs
         //user_id, service_request_id_fk, service_offer_id_fk, service_provider_name, service_title, price_range, job confirmed
-        let sql = `SELECT user.id as user_id, service_offer.id as service_offer_id_fk, user.full_name as service_provider_name, title as service_title, price_range FROM user, address, services, service_provider, service_offer, so_location, so_schedule where user.id = service_provider.user_id_fk and address.id = user.address_id_fk and service_provider.id = service_offer.service_provider_id_fk and services.id = service_offer.services_id_fk and service_provider.id = so_location.service_provider_id_fk and service_offer.id = so_schedule.service_offer_id_fk and status = 'active' and available_to_match = 1 and do_not_disturb = 0 and services.id = ${service_id}`;
-        if (emergency){
+        let sql = `SELECT user.id as user_id, service_offer.id as service_offer_id_fk, user.full_name as service_provider_name, title as service_title, price_range, longitude, latitude, radius, start_time, end_time, day FROM user, address, services, service_provider, service_offer, so_location, so_schedule where user.id = service_provider.user_id_fk and address.id = user.address_id_fk and service_provider.id = service_offer.service_provider_id_fk and services.id = service_offer.services_id_fk and service_provider.id = so_location.service_provider_id_fk and service_offer.id = so_schedule.service_offer_id_fk and status = 'active' and available_to_match = 1 and do_not_disturb = 0 and services.id = ${service_id}`;
+        if (emergency) {
             sql = sql + ` and provides_emergency_service = 1`;
         }
-        locMod = {address: location.city+', '+location.state+', '+location.zipcode+', '+'USA'};
+        locMod = { address: location.city + ', ' + location.state + ', ' + location.zipcode + ', ' + 'USA' };
         console.log(locMod);
-        mysqlConnection.query(sql,(err, result)=>{
-            if(err){
+        mysqlConnection.query(sql, (err, result) => {
+            if (err) {
                 return reject(err);
             }
-            if(result.length==0){
+            if (result.length == 0) {
                 return resolve([]);
             }
             let screened = [];
             locationModel.getLongLat(locMod)
-                .then((point1)=>{
+                .then((point1) => {
                     //console.log(point1); //for debugging
-                    result.forEach((element) => {
-                        const point2 = {
-                            latitude: element.latitude,
-                            longitude: element.longitude
-                        }
-                        //console.log(point2); //for debugging
-                        locationModel.distanceCalculation(point1, point2, (dist)=>{
-                            console.log(dist)
-                            //change 1500 to element.radius
-                            if (dist <= element.radius){
-                                screened.push(element);
+                    screenedMatching(result, point1)
+                        .then((matchedArray) => {
+
+                            screened = matchedArray;
+                            if(screened.length==0){
+                                return resolve([]);
                             }
+                            // console.log(screened);
+                            //Add schedule part below it. I will be passing the array named as screened
+                            //Time zone.
+                            let j = new Array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT');
+                            let d = new Date(datePayload.year, datePayload.month - 1, datePayload.day);
+                            //schedule={date: {year: 2020, month: 4, day: 30}, time: {hour: 12, minute: 30, second: 0}, no_of_hours: 4};
+                            //requested start and end time 
+                            let noOfHours = Number(payLoad['no_of_hours']);
+                            let addValue = timePayload.hour + noOfHours;
+                            let startTime = Date.parse('01/01/2020' + " " + timePayload.hour + ":" + timePayload.minute + ":" + timePayload.second);
+                            let endTime = Date.parse('01/01/2020' + " " + addValue + ":" + timePayload.minute + ":" + timePayload.second);
+                            //loop
+                            let screened2 = [];
+                            screened.forEach((item) => {
+                                //db start and end time 
+                                let startTimeDB = Date.parse('01/01/2020' + ' ' + item.start_time);
+                                let endTimeDB = Date.parse('01/01/2020' + ' ' + item.end_time);
+                                let dayi = j[d.getDay()];
+                                let daydb = item.day;
+                                if ((j[d.getDay()] === item.day) && (startTime >= startTimeDB) && (endTime <= endTimeDB)) {
+                                    screened2.push(item);
+                                }
+                            });
+                            //if no match return a string saying no match found.
+                            if (screened2.length > 0) {
+                                console.log(screened2);
+                                return resolve(screened2);
+                            }
+                            else {
+                                return resolve([]);
+                            }
+                        })
+                        .catch((error) => {
+                            return reject(error);
                         });
-                    });
-                    if(screened.length==0){
-                        return resolve([]);
-                    }
-                    console.log(screened);
-                    //Add schedule part below it. I will be passing the array named as screened
-                    //Time zone.
-                    let j = new Array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT');
-                    let d = new Date(datePayload.year, datePayload.month - 1, datePayload.day);
-                    //schedule={date: {year: 2020, month: 4, day: 30}, time: {hour: 12, minute: 30, second: 0}, no_of_hours: 4};
-                    //requested start and end time 
-                    let startTime = Date.parse('01/01/2020' + " " +timePayload.hour+":"+timePayload.minute+":"+timePayload.second);
-                    let endTime = Date.parse('01/01/2020' + " "+`${timePayload.hour + payLoad['no_of_hours']}`+":"+timePayload.minute+":"+timePayload.second);
-                    //loop
-                    let screened2 = [];
-                    screened.forEach((item)=>{
-                        //db start and end time 
-                        let startTimeDB = Date.parse('01/01/2020'+' '+item.start_time);
-                        let endTimeDB = Date.parse('01/01/2020'+' '+item.end_time);
-                        if ((j[d.getDay()] === item.day) && (startTime >= startTimeDB) && (endTime <= endTimeDB)){
-                            screened2.push(item);
-                        }
-                    });
-                    //if no match return a string saying no match found.
-                    if(screened2.length){
-                        console.log(screened2);
-                        return resolve(screened2);
-                    }
-                    else{
-                        return resolve([]);
-                    }
                 })
-                .catch((error)=>{
+                .catch((error) => {
                     return reject(error);
                 });
         });
     });
 }
 
+const screenedMatching = (result, point1) => {
+    return new Promise((resolve, reject) => {
+
+        var totalCalls = 0;
+        let screened = [];
+        result.forEach((element) => {
+            const point2 = {
+                latitude: element.latitude,
+                longitude: element.longitude
+            }
+            locationModel.distanceCalculation(point1, point2, (dist) => {
+                console.log(dist)
+                if (dist <= element.radius) {
+                    screened.push(element);
+                }
+                totalCalls++;
+                if (totalCalls == result.length) {
+                    return resolve(screened);
+                }
+            });
+        });
+    })
+}
+
 //quote table attributes: service_request_id_fk, service_offer_id_fk, service_provider_name, service_title, price_range, service_provider_rating, service_provider_reviews, job_confirmed and also has the userid for ui
 //create quote
 //array of objects to array of values of objects, the output from the getMatching
-const createQuote = (payLoad, callback)=>{
+const createQuote = (payLoad, callback) => {
     getMatching(payLoad)
-        .then((objArr)=>{
-            if(objArr.length==0){
-                return callback([]);
+        .then((objArr) => {
+            if (objArr.length == 0) {
+                return callback(null, []);
             }
             let keys = Object.keys(objArr[0]);
             let keysClone = [...keys];
             let rem = keysClone.splice(keysClone.indexOf('user_id'), 1); //pop user_id
-            const attr = keysClone.toString(); 
+            const attr = keysClone.toString();
             let arrArr = [];
-            let  userIds= [];
-            for(i = 0; i < objArr.length; i++){
+            let userIds = [];
+            for (i = 0; i < objArr.length; i++) {
                 let objArrMid = [];
-                Object.keys(objArr[i]).find((key)=>{
-                    if(key==='user_id'){
+                Object.keys(objArr[i]).find((key) => {
+                    if (key === 'user_id') {
                         userIds.push(objArr[i][key]);
                     }
-                    else{
+                    else {
                         objArrMid.push(objArr[i][key]);
                     }
                 });
                 arrArr.push(objArrMid);
             };
             console.log(arrArr);
-            let sql = `INSERT INTO quote ('${attr}') VALUES ?`;
+            let sql = `INSERT INTO quote (${attr}) VALUES ?`;
             //job confirmed = 0
-            mysqlConnection.query(sql, [arrArr], (err, result)=>{
-                if(err){
+            mysqlConnection.query(sql, [arrArr], (err, result) => {
+                if (err) {
                     return callback(err);
                 }
-                else{
+                else {
                     var insertIds = [];
                     for (let i = result.insertId; i < result.insertId + result.affectedRows; i++) {
                         insertIds.push(i);
                     }
                     console.log(insertIds);
                     let userQuoteIds = [];
-                    for (let i = 0; i < insertIds.length; i++){
+                    for (let i = 0; i < insertIds.length; i++) {
                         let comb = {
                             q_id: insertIds[i],
-                            user_id: userIds[i] 
+                            user_id: userIds[i]
                         };
                         userQuoteIds.push(comb);
                     }
-                    return callback(userQuoteIds);
+                    return callback(null, userQuoteIds);
                 }
             });
         })
-        .catch((error)=>{
+        .catch((error) => {
             return callback(error);
         });
-    
+
 };
 
 //update quote for only one attribute
-const updateQuote = (id, payLoad, callback)=>{
+const updateQuote = (id, payLoad, callback) => {
     let key = Object.keys(payload);
     let val = Object.values(payLoad);
     //const attr = keys.toString();
     //const vals = vals.toString();
-    
+
     //check the value should be in '' or not
     let sql = `UPDATE quote SET '${key}' = ${val} where id = ${id}`;
-    mysqlConnection.query(sql, (err, result)=>{
-        if(err){
+    mysqlConnection.query(sql, (err, result) => {
+        if (err) {
             return callback(err);
         }
-        else{
+        else {
             return callback(result.insertId);
         }
     });

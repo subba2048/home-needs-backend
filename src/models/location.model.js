@@ -128,7 +128,6 @@ const distanceCalculation = function(point1, point2, callback){
     var a = Math.sin(delPhi/2) * Math.sin(delPhi/2) + Math.cos(phi1) * Math.cos(phi2) * Math.sin(delLambda/2) * Math.sin(delLambda/2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     var d = R * c; 
-    console.log(d);
     return callback(d);
 };
 
