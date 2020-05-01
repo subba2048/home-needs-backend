@@ -29,6 +29,9 @@ const getMatching = (payLoad)=>{
             if(err){
                 return reject(err);
             }
+            if(result.length==0){
+                return resolve([]);
+            }
             let screened = [];
             locationModel.getLongLat(locMod)
                 .then((point1)=>{
@@ -47,7 +50,9 @@ const getMatching = (payLoad)=>{
                             }
                         });
                     });
-    
+                    if(screened.length==0){
+                        return resolve([]);
+                    }
                     console.log(screened);
                     //Add schedule part below it. I will be passing the array named as screened
                     //Time zone.
@@ -68,12 +73,12 @@ const getMatching = (payLoad)=>{
                         }
                     });
                     //if no match return a string saying no match found.
-                    if(screened.length){
+                    if(screened2.length){
                         console.log(screened2);
                         return resolve(screened2);
                     }
                     else{
-                        return resolve("No Match Found.");
+                        return resolve([]);
                     }
                 })
                 .catch((error)=>{
@@ -89,6 +94,9 @@ const getMatching = (payLoad)=>{
 const createQuote = (payLoad, callback)=>{
     getMatching(payLoad)
         .then((objArr)=>{
+            if(objArr.length==0){
+                return callback([]);
+            }
             let keys = Object.keys(objArr[0]);
             let keysClone = [...keys];
             let rem = keysClone.splice(keysClone.indexOf('user_id'), 1); //pop user_id
