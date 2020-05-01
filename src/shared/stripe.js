@@ -55,11 +55,16 @@ const createAccount = function(token,callback){
 
 
 // Charge the Customer instead of the card:
-// const charge = await stripe.charges.create({
-//   amount: 1000,
-//   currency: 'usd',
-//   customer: customer.id,
-// });
+const createPayment = function(amount,customerID,callback){
+  stripe.charges.create({
+    amount: amount,
+    currency: 'usd',
+    customer: customerID,
+  }, function(err,result){
+      console.log(result)
+  });
+};
+
 
 // YOUR CODE: Save the customer ID and other info in a database for later.
 
@@ -70,19 +75,10 @@ const createAccount = function(token,callback){
 //   customer: customer.id, // Previously stored, then retrieved
 // });
 
-// stripe.charges.create(
-//     {
-//       amount: 2000,
-//       currency: 'usd',
-//       source: 'tok_visa',
-//       description: 'My First Test Charge (created for API docs)',
-//     },
-//     function(err, charge) {
-//       // asynchronously called
-//     }
-//   );
+
 
 module.exports = {
     createCustomer: createCustomer,
-    createAccount: createAccount
+    createAccount: createAccount,
+    createPayment: createPayment
 };

@@ -14,8 +14,8 @@ const getSRSchedule = function (srID, callback){
 
 //create a service request schedule
 const createSRSchedule = function(payLoad,callback){
-    let timeRequested = payLoad['time_requested'].hour + ":"+payLoad['time_requested'].minute + ":00";
-    const sql = `Insert into SR_Schedule (service_request_id_fk, date_requested, time_requested, frequency, no_of_hours) values (${payLoad['service_request_id_fk']}, '${payLoad['date_requested']}', '${timeRequested}', '${payLoad['frequency']}', '${payLoad['no_of_hours']}' );`;
+    // let timeRequested = payLoad['time_requested'].hour + ":"+payLoad['time_requested'].minute + ":00";
+    const sql = `INSERT into sr_schedule (service_request_id_fk, date_requested, time_requested, frequency, no_of_hours,end_date) values (${payLoad['service_request_id_fk']}, '${payLoad['date_requested']}', '${payLoad['time_requested']}', '${payLoad['frequency']}', '${payLoad['no_of_hours']}', '${payLoad['end_date']}' );`;
     mysqlConnection.query(sql,(err, rows, fields)=>{
         if(!err){
             var insertId = rows.insertId+'';

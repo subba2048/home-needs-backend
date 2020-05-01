@@ -38,7 +38,12 @@ const updatePaymentStatus = function(paymentID,status,callback){
 const createPayment = function(jobID,payLoad,callback){
     //create payment update job 
     // id, payment_date, amount, transaction_number, status
-    payLoad['status'] = 'initiated';
+
+    //chanrge customer
+    //payour SP
+    //3rd inser payment
+    // 4 update job
+    payLoad['status'] = 'completed';
     const sqlQuery = "insert into payment (payment_date, amount, transaction_number, status) VALUES ? ;";
     mysqlConnection.query(sqlQuery,payLoad,(err, rows, fields)=>{
         if(!err){
