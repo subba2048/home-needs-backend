@@ -70,6 +70,41 @@ const updateJobStatus = function(jobID,status,callback){
     })
 };
 
+//get jobids by a userID for customer
+const getJobsByUserIDCustomer = (userID, callback)=>{
+    let sql = `SELECT job.id as job_id FROM user, customer, job WHERE user.id = customer.user_id_fk and customer.id = job.customer_id_fk and user.id = ${userID}`;
+    mysqlConnection.query(sql, (err, result)=>{
+        if(err){
+            return callback(err);
+        }
+        //console.log(result);
+        let jobIds = [];
+        //convert the result array of objects with job_ids to array of job_ids.
+        result.forEach((element) => {
+            jobIds.push(element.job_id);
+        });
+        return callback(jobIds);
+    });
+};
+
+//get jobids by a userID for a service provider
+const getJobsByUserIDServiceProvider = (userID, callback)=>{
+    let sql = `SELECT job.id as job_id FROM user, service_provider, job WHERE user.id = service_provider.user_id_fk and service_provider.id = job.service_provider_id_fk and user.id = ${userID}`;
+    mysqlConnection.query(sql, (err, result)=>{
+        if(err){
+            return callback(err);
+        }
+        //console.log(result);
+        let jobIds = [];
+        //convert the result array of objects with job_ids to array of job_ids.
+        result.forEach((element) => {
+            jobIds.push(element.job_id);
+        });
+        return callback(jobIds);
+    });
+};
+
+
 const deleteJobs = function(jobID,callback){
 
     const sqlQuery = "delete job where id = "+jobID+";";
@@ -105,6 +140,8 @@ module.exports = {
     getJobsByID: getJobsByID,
     getJobsByCustomerID: getJobsByCustomerID,
     getJobsBySPID: getJobsBySPID,
+    getJobsByUserIDCustomer: getJobsByUserIDCustomer,
+    getJobsByUserIDServiceProvider: getJobsByUserIDServiceProvider,
     updateJob: updateJob,
     updateJobStatus: updateJobStatus,
     deleteJobs: deleteJobs,

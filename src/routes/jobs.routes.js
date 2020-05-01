@@ -15,6 +15,7 @@ Router.get("/:custID",(req, res, next)=>{
         //   });
     }
 )});
+
 //Get all jobs by SPID
 Router.get("/:SPID",(req, res, next)=>{
     const SPID = req.params.SPID;
@@ -28,6 +29,7 @@ Router.get("/:SPID",(req, res, next)=>{
         //   });
     }
 )});
+
 //Get jobs by id
 Router.get("/:id",(req,res, next)=>{
     jobsModel.getJobsByID(req.params.id,function(err,rows){
@@ -35,7 +37,33 @@ Router.get("/:id",(req,res, next)=>{
         res.send(rows);
         else
         res.send(err);
-    })
+    });
+});
+
+//get jobs by userId for customers
+Router.get('/:userID', (req, res)=>{
+    jobsModel.getJobsByUserIDCustomer(req.params.userID, (err, result)=>{
+        if(err){
+            res.send(err);
+        }
+        else{
+            //an array of job ids
+            res.send(result);
+        }
+    });
+});
+
+//get jobs by userId for service providers
+Router.get('/:userID', (req, res)=>{
+    jobsModel.getJobsByUserIDServiceProvider(req.params.userID, (err, result)=>{
+        if(err){
+            res.send(err);
+        }
+        else{
+            //an array of job ids
+            res.send(result);
+        }
+    });
 });
 
 //create job
