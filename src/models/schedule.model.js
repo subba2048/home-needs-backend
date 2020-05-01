@@ -1,12 +1,31 @@
 const mysqlConnection = require("../../connection");
 
-const getsrschedule = function(callback){
-    mysqlConnection.query("select * from sr_schedule; ",(err, rows, fields)=>{
-        if(err) return callback(err);
-        return callback(null,rows);
+//get sr schedule by service request id
+const getSRSchedule = function (srID, callback){
+    let sql = `select * from sr_schedule where service_request_id_fk = ${srID}`;
+    mysqlConnnection.query(sql, (err, result) => {
+        if(err){
+            return callback(err);
+        }
+        //return an object with date requested, time requested, frequency, no_of_hours
+        return callback(result[0]);
     });
 };
 
+//create a service request schedule
+const createSRSchedule = function(payLoad,callback){
+    let timeRequested = payLoad['time_requested'].hour + ":"+payLoad['time_requested'].minute + ":00";
+    const sql = `Insert into SR_Schedule (service_request_id_fk, date_requested, time_requested, frequency, no_of_hours) values (${payLoad['service_request_id_fk']}, '${payLoad['date_requested']}', '${timeRequested}', '${payLoad['frequency']}', '${payLoad['no_of_hours']}' );`;
+    mysqlConnection.query(sql,(err, rows, fields)=>{
+        if(!err){
+            var insertId = rows.insertId+'';
+            console.log('Last insert ID:', insertId);
+            return callback(null,insertId);
+        }else{
+            return callback(err);
+        }
+    });
+};
 
 
 
@@ -24,6 +43,7 @@ const updatesrschedule = function(sr_requestID,payLoad,callback){
     });
 };
 
+/*
 const createsrschedule = function(payLoad,callback){
     const sqlq = "insert into sr_schedule (service_request_id_fk, date_requested, time_requested, frequency) values ('"+payLoad['service_request_id_fk']+"', '"+payLoad['YYYY-MM-DD']+"', '"+payLoad['HHH:MM:SS']+"', '"+payLoad['frequency']+"' );";
     mysqlConnection.query(sqlq,(err, rows, fields)=>{
@@ -36,10 +56,11 @@ const createsrschedule = function(payLoad,callback){
         }
     });
 };
+*/
 
 module.exports = {
-    getsrschedule: getsrschedule,
-    createsrschedule: createsrschedule,
+    getsrschedule: getSRSchedule,
+    createsrschedule: createSRSchedule,
     updatesrschedule: updatesrschedule
 
 };
