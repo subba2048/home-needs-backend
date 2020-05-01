@@ -39,9 +39,8 @@ const createSRLocation = (SRID, payLoad, callback)=>{
             if(err){
                 return callback(err);
             }
-            var insertId = rows.insertId+'';
-            console.log('Last inserted ID: ', insertId);
-            return callback(null,insertId);
+            console.log('Affected Rows: ', rows.affectedRows);
+            return callback(null,rows.affectedRows);
         });
     });
 };
