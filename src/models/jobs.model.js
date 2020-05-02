@@ -128,7 +128,7 @@ const createJob = function(payLoad,callback){
         columns += key+",";
         values += payLoad[key]+",";
     });
-    colums = colums.substring(0, colums.length - 1);
+    columns = columns.substring(0, colums.length - 1);
     values = values.substring(0, values.length - 1);
     const sqlQuery = `insert into job (${columns}) VALUES (${values});`;
     mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
@@ -199,7 +199,7 @@ const createJobScheduleMeta = (payLoad, callback)=>{
                 columns += key+",";
                 values += metaSchedule[key]+",";
             });
-            colums = colums.substring(0, colums.length - 1);
+            columns = columns.substring(0, colums.length - 1);
             values = values.substring(0, values.length - 1);
             const sql = `INSERT job_schedule_meta (${columns}) VALUES (${values})`;
             mysqlConnection.query(sql, (err, result)=>{
