@@ -2,8 +2,8 @@ const express = require("express");
 const Router = express.Router();
 const jobsModel = require("../models/jobs.model");
 
-//Get all jobs by custID
-Router.get("/:custID",(req, res, next)=>{
+//DO NOT USE
+Router.get("/custID/:custID",(req, res, next)=>{
     const custID = req.params.custID;
     jobsModel.getJobsByCustomerID(custID,function(err,rows){
         if(!err)
@@ -16,10 +16,10 @@ Router.get("/:custID",(req, res, next)=>{
     }
 )});
 
-//Get all jobs by SPID
-Router.get("/:SPID",(req, res, next)=>{
+//DO NOT USE
+Router.get("/SPID/:SPID",(req, res, next)=>{
     const SPID = req.params.SPID;
-    jobsModel.getJobsByCustomerID(SPID,function(err,rows){
+    jobsModel.getJobsBySPID(SPID,function(err,rows){
         if(!err)
         res.send(rows);
         else
@@ -41,7 +41,7 @@ Router.get("/:id",(req,res, next)=>{
 });
 
 //get jobs by userId for customers
-Router.get('/:userID', (req, res)=>{
+Router.get('/customer/:userID', (req, res)=>{
     jobsModel.getJobsByUserIDCustomer(req.params.userID, (err, result)=>{
         if(err){
             res.send(err);
@@ -54,7 +54,7 @@ Router.get('/:userID', (req, res)=>{
 });
 
 //get jobs by userId for service providers
-Router.get('/:userID', (req, res)=>{
+Router.get('/sp/:userID', (req, res)=>{
     jobsModel.getJobsByUserIDServiceProvider(req.params.userID, (err, result)=>{
         if(err){
             res.send(err);
