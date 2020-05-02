@@ -10,7 +10,7 @@ const getUsers = function(callback){
 
 //create joins with fks
 const getUserByID = function(userID,callback){
-    const query = `select * from user,address,phone_number where user.id = '`+userID+`' 
+    const query = `select * from login,user,address,phone_number where login.user_id_fk='`+userID+`' and user.id = '`+userID+`' 
     and user.address_id_fk = address.id and phone_number.user_id_fk = '`+userID+`';`;
 
     mysqlConnection.query(query,(err, rows, fields)=>{
