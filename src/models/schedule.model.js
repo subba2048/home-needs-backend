@@ -3,12 +3,12 @@ const mysqlConnection = require("../../connection");
 //get sr schedule by service request id
 const getSRSchedule = function (srID, callback){
     let sql = `select * from sr_schedule where service_request_id_fk = ${srID}`;
-    mysqlConnnection.query(sql, (err, result) => {
+    mysqlConnection.query(sql, (err, result) => {
         if(err){
             return callback(err);
         }
         //return an object with date requested, time requested, frequency, no_of_hours
-        return callback(result[0]);
+        return callback(null,result);
     });
 };
 
@@ -59,7 +59,7 @@ const createsrschedule = function(payLoad,callback){
 */
 
 module.exports = {
-    getsrschedule: getSRSchedule,
+    getSRSchedule: getSRSchedule,
     createsrschedule: createSRSchedule,
     updatesrschedule: updatesrschedule
 

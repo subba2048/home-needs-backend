@@ -40,7 +40,7 @@ const createSRLocation = (SRID, payLoad, callback)=>{
                 return callback(err);
             }
             console.log('Affected Rows: ', rows.affectedRows);
-            return callback(null,rows.affectedRows);
+            return callback(null,addressID+'');
         });
     });
 };

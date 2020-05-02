@@ -50,10 +50,24 @@ Router.post("/",(req,res, next)=>{
 // });
 
 //Update the quotes table for a specific quote id with SRID and job confirmed
-Router.post("/update/:id",(req,res, next)=>{
+Router.post("/update",(req,res, next)=>{
     const payLoad = req.body;
     //update quotes with the SR ID
-    matchingModel.updateQuote(req.params.id, payLoad,(err, insertId)=>{
+    matchingModel.updateQuote(payLoad,(err, insertId)=>{
+        if(err){
+            res.send(err);
+        }
+        else{
+            //send the updated insert id .
+            res.send(insertId);
+        }
+    });
+});
+
+Router.post("/updateJobConfimed",(req,res, next)=>{
+    const payLoad = req.body;
+    //update quotes with the SR ID
+    matchingModel.updateQuoteWithJobConfirmed(payLoad,(err, insertId)=>{
         if(err){
             res.send(err);
         }

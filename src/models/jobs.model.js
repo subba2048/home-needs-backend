@@ -1,4 +1,5 @@
 const mysqlConnection = require("../../connection");
+const SRScheduleModel = require("./schedule.model");
 
 const getJobs = function(callback){
     mysqlConnection.query("select * from job;",(err, rows, fields)=>{
@@ -120,17 +121,17 @@ const deleteJobs = function(jobID,callback){
 
 const createJob = function(payLoad,callback){
     payLoad['job_status'] = 'job_created';
-    payLoad['payment_id_fk'] = null;
-    //update payment id later
-    keys = Object.keys(payLoad);
-    let columns = "", values ="";
+    var keys = Object.keys(payLoad);
+    var colums = "", values ="";
     keys.forEach(key => {
-        columns += key+",";
-        values += payLoad[key]+",";
+        colums+=key+",";
+        values+="'"+payLoad[key]+"',";
     });
-    colums = colums.substring(0, colums.length - 1);
-    values = values.substring(0, values.length - 1);
-    const sqlQuery = `insert into job (${columns}) VALUES (${values});`;
+    colums+='payment_id_fk';
+    values+=null
+    // colums = colums.substring(0, colums.length - 1);
+    // values = values.substring(0, values.length - 1);
+    const sqlQuery = "insert into job ("+colums+") values ("+values+");";
     mysqlConnection.query(sqlQuery,(err, rows, fields)=>{
         if(!err){
             var insertId = rows.insertId+'';
@@ -144,7 +145,7 @@ const createJob = function(payLoad,callback){
 
 //Input should have necessay payload to create a job. quote_id_fk, customer_id_fk, service_provider_id_fk, services_id_fk, address_id_fk
 const createJobSchedule = (payLoad)=>{
-    return new promise((resolve, reject)=>{
+    return new Promise((resolve, reject)=>{
         createJob(payLoad, (errr, jobId)=>{
             if(errr){
                 return reject(errr);
@@ -157,7 +158,7 @@ const createJobSchedule = (payLoad)=>{
                 //the insertId for newly created job_schedule entry
                 let jobScheduleID = result.insertId;
                 //write a query by using quote_id_fk to get the service_request_id, using that call getsrSchdeule()
-                let sql2 = `SELECT service_request_id_fk FROM quote WHERE id = ${payLoad.quote_id_fk}`;
+                let sql2 = `SELECT service_request_id_fk FROM quote WHERE id = ${payLoad.quote_id_fk};`;
                 mysqlConnection.query(sql2, (error, reslt)=>{
                     if(error){
                         return reject(error);
@@ -184,30 +185,56 @@ const createJobScheduleMeta = (payLoad, callback)=>{
     createJobSchedule(payLoad)
         .then((jobScheduleObject)=>{
             let metaSchedule = {};
+            var v1 = jobScheduleObject['date_requested'];
+            var startDate = v1.getFullYear() + "-" + (v1.getMonth() + 1) + "-" + v1.getDate();
+            var v2 = jobScheduleObject['end_date'];
+            var endDate = v2.getFullYear() + "-" + (v2.getMonth() + 1) + "-" + v2.getDate();
+            var freq = ['one_time', 'daily', 'weekly', 'biweekly', 'monthly', 'quarterly', 'semi_annual', 'annual'];
+            const f = jobScheduleObject['frequency'];
+            var repeat;
+            if(f == 'one_time'){
+                repeat = 0;
+            }else if(f == 'daily'){
+                repeat = 1;
+            }else if(f == 'weekly'){
+                repeat = 7;
+            }else if(f == 'biweekly'){
+                repeat = 14;
+            }else if(f == 'monthly'){
+                repeat = 30;
+            }else if(f == 'quarterly'){
+                repeat = 120;
+            }else if(f == 'semi_annual'){
+                repeat = 180;
+            }else if(f == 'annual'){
+                repeat = 365;
+            }
             metaSchedule['job_schedule_id_fk'] = jobScheduleObject['job_schedule_id_fk'];
             metaSchedule['job_id_fk'] = jobScheduleObject['job_id_fk'];
-            metaSchedule['repeat_start'] = jobScheduleObject['date_requested'];
-            metaSchedule['repeat_interval'] = jobScheduleObject['frequency'];
-            metaSchedule['repeat_end'] = jobScheduleObject['end_date'];  //null; update this, what should be the column name?
+            metaSchedule['repeat_start'] = startDate;
+            metaSchedule['repeat_interval'] = repeat;
+            metaSchedule['repeat_end'] = endDate;  //null; update this, what should be the column name?
             metaSchedule['start_time'] = jobScheduleObject['time_requested'];
             let timeSplit = jobScheduleObject['time_requested'].split(':');
             let timeSplitHour = parseInt(timeSplit[0]) + jobScheduleObject['no_of_hours'];
             metaSchedule['end_time'] = timeSplitHour + ":" + timeSplit[1] + ":00";
-            keys = Object.keys(metaSchedule);
-            let columns = "", values ="";
+
+            var keys = Object.keys(metaSchedule);
+            var colums = "", values ="";
             keys.forEach(key => {
-                columns += key+",";
-                values += metaSchedule[key]+",";
+                colums+=key+",";
+                values+="'"+metaSchedule[key]+"',";
             });
+
             colums = colums.substring(0, colums.length - 1);
             values = values.substring(0, values.length - 1);
-            const sql = `INSERT job_schedule_meta (${columns}) VALUES (${values})`;
-            mysqlConnection.query(sql, (err, result)=>{
+            const sqlQuery = "insert into job_schedule_meta ("+colums+") values ("+values+");";
+            mysqlConnection.query(sqlQuery, (err, result)=>{
                 if(err){
                     return callback(err);
                 }
                 //return the insertId for job_schedule_meta, will there be multiple job_schedule_meta?
-                return callback(result.insertId);
+                return callback(result.insertId+'');
             })
         })
         .catch((error)=>{

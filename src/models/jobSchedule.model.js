@@ -15,7 +15,7 @@ const getjobScheduleMetaByJobId = (jobId, callback)=>{
 
 //Input should have necessay payload to create a job. quote_id_fk, customer_id_fk, service_provider_id_fk, services_id_fk, address_id_fk
 const createJobSchedule = (payLoad)=>{
-    return new promise((resolve, reject)=>{
+    return new Promise((resolve, reject)=>{
         jobsModel.createJob(payLoad, (errr, jobId)=>{
             if(errr){
                 return reject(errr);

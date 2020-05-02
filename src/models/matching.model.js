@@ -19,7 +19,7 @@ const getMatching = (payLoad) => {
         const timePayload = payLoad.time;
         //check with which attributes needed for this join for quotes and jobs
         //user_id, service_request_id_fk, service_offer_id_fk, service_provider_name, service_title, price_range, job confirmed
-        let sql = `SELECT user.id as user_id, service_offer.id as service_offer_id_fk, user.full_name as service_provider_name, title as service_title, price_range, longitude, latitude, radius, start_time, end_time, day FROM user, address, services, service_provider, service_offer, so_location, so_schedule where user.id = service_provider.user_id_fk and address.id = user.address_id_fk and service_provider.id = service_offer.service_provider_id_fk and services.id = service_offer.services_id_fk and service_provider.id = so_location.service_provider_id_fk and service_offer.id = so_schedule.service_offer_id_fk and status = 'active' and available_to_match = 1 and do_not_disturb = 0 and services.id = ${service_id}`;
+        let sql = `SELECT user.id as user_id, service_provider.id as service_provider_id, service_offer.id as service_offer_id_fk, user.full_name as service_provider_name, title as service_title, price_range, longitude, latitude, radius, start_time, end_time, day FROM user, address, services, service_provider, service_offer, so_location, so_schedule where user.id = service_provider.user_id_fk and address.id = user.address_id_fk and service_provider.id = service_offer.service_provider_id_fk and services.id = service_offer.services_id_fk and service_provider.id = so_location.service_provider_id_fk and service_offer.id = so_schedule.service_offer_id_fk and status = 'active' and available_to_match = 1 and do_not_disturb = 0 and services.id = ${service_id}`;
         if (emergency) {
             sql = sql + ` and provides_emergency_service = 1`;
         }
@@ -122,15 +122,20 @@ const createQuote = (payLoad, callback) => {
             let keys = Object.keys(objArr[0]);
             let keysClone = [...keys];
             let rem = keysClone.splice(keysClone.indexOf('user_id'), 1); //pop user_id
-            const attr = keysClone.toString();
-            attr += 'service_request_id_fk';
+            // var attr = keysClone.toString();
+            // attr += 'service_request_id_fk';
+            var attr = "service_offer_id_fk,service_provider_name,service_title,price_range,service_request_id_fk";
             let arrArr = [];
             let userIds = [];
+            let SPIDs = [];
             for (i = 0; i < objArr.length; i++) {
                 let objArrMid = [];
                 Object.keys(objArr[i]).find((key) => {
                     if (key === 'user_id') {
                         userIds.push(objArr[i][key]);
+                    }
+                    else if (key === 'service_provider_id') {
+                        SPIDs.push(objArr[i][key]);
                     }
                     else if(key !== 'longitude' && key !== 'latitude' && key !== 'day' && key !== 'radius' && key !== 'start_time' && key !== 'end_time'){
                         objArrMid.push(objArr[i][key]);
@@ -162,7 +167,8 @@ const createQuote = (payLoad, callback) => {
                     for (let i = 0; i < insertIds.length; i++) {
                         let comb = {
                             q_id: insertIds[i],
-                            user_id: userIds[i]
+                            user_id: userIds[i],
+                            service_provider_id: SPIDs[i]
                         };
                         userQuoteIds.push(comb);
                     }
@@ -176,25 +182,55 @@ const createQuote = (payLoad, callback) => {
 
 };
 
-//update quote for only one attribute
-const updateQuote = (id, payLoad, callback) => {
-    let key = Object.keys(payload);
-    let val = Object.values(payLoad);
+
+const updateQuote = (payLoad, callback) => {
+    // let key = Object.keys(payload);
+    // let val = Object.values(payLoad);
     //const attr = keys.toString();
     //const vals = vals.toString();
-
+    const quotesArray = payLoad['quotes_array']
+    const SRID = payLoad['service_request_id'];
+    const d = JSON.parse(quotesArray);
+    var sql = '';
+    d.forEach(q => {
+        var f = q['q_id'];
+        sql += `UPDATE quote SET service_request_id_fk = ${SRID} where id = ${f};`;
+    });
     //check the value should be in '' or not
-    let sql = `UPDATE quote SET '${key}' = ${val} where id = ${id}`;
+    // let sql = `UPDATE quote SET '${key}' = ${val} where id = ${id}`;
     mysqlConnection.query(sql, (err, result) => {
         if (err) {
             return callback(err);
         }
         else {
-            return callback(result.insertId);
+            var sql2 = "select * from quote where service_request_id_fk = "+SRID+";"
+            mysqlConnection.query(sql2, (err, result) => {
+                if (err) {
+                    return callback(err);
+                }
+                else {
+                    return callback(null,result);
+                }
+            });
         }
     });
 };
 
+//update quote for only one attribute
+const updateQuoteWithJobConfirmed = (payLoad, callback) => {
+
+    const ID = payLoad['quoteID'];
+    var sql = `UPDATE quote SET job_confirmed = 1 where id = ${ID};`;;
+
+    mysqlConnection.query(sql, (err, result) => {
+        if (err) {
+            return callback(err);
+        }
+        else {
+            return callback(null,result);
+        }
+    });
+};
 
 
 /*
@@ -268,5 +304,6 @@ const getMatching = (payLoad, callback)=>{
 module.exports = {
     getMatching,
     createQuote,
-    updateQuote
+    updateQuote,
+    updateQuoteWithJobConfirmed
 };
