@@ -69,7 +69,8 @@ Router.get('/:userID', (req, res)=>{
 //create job
 Router.post("/create",(req,res,next)=>{
     const payLoad = req.body;
-    jobsModel.createJob(payLoad,function(err,rows){
+    //using createScheduleMeta
+    jobsModel.createJobScheduleMeta(payLoad,function(err,rows){
         if(!err)
         res.send(rows);
         else

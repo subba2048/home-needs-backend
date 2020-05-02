@@ -59,7 +59,7 @@ const createJobScheduleMeta = (payLoad, callback)=>{
             metaSchedule['job_id_fk'] = jobScheduleObject['job_id_fk'];
             metaSchedule['repeat_start'] = jobScheduleObject['date_requested'];
             metaSchedule['repeat_interval'] = jobScheduleObject['frequency'];
-            metaSchedule['repeat_end'] = null; //update this
+            metaSchedule['repeat_end'] = jobScheduleObject['repeat_end'];  //null; update this, what should be the column name?
             metaSchedule['start_time'] = jobScheduleObject['time_requested'];
             let timeSplit = jobScheduleObject['time_requested'].split(':');
             let timeSplitHour = parseInt(timeSplit[0]) + jobScheduleObject['no_of_hours'];
