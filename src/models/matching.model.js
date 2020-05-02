@@ -123,6 +123,7 @@ const createQuote = (payLoad, callback) => {
             let keysClone = [...keys];
             let rem = keysClone.splice(keysClone.indexOf('user_id'), 1); //pop user_id
             const attr = keysClone.toString();
+            attr += 'service_request_id_fk';
             let arrArr = [];
             let userIds = [];
             for (i = 0; i < objArr.length; i++) {
@@ -131,10 +132,17 @@ const createQuote = (payLoad, callback) => {
                     if (key === 'user_id') {
                         userIds.push(objArr[i][key]);
                     }
+                    else if(key !== 'longitude' && key !== 'latitude' && key !== 'day' && key !== 'radius' && key !== 'start_time' && key !== 'end_time'){
+                        objArrMid.push(objArr[i][key]);
+                    }
+                    /*
                     else {
                         objArrMid.push(objArr[i][key]);
                     }
+                    */
                 });
+                //not adding job_confirmed as if we have NotNull in db it will be zero by default as it is a TinyInt.
+                objArrMid.push(null);
                 arrArr.push(objArrMid);
             };
             console.log(arrArr);
