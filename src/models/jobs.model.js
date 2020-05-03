@@ -101,7 +101,7 @@ const getJobsByUserIDCustomer = (userID, callback)=>{
 
 //get jobids by a userID for a service provider
 const getJobsByUserIDServiceProvider = (userID, callback)=>{
-    let sql = `SELECT job.id as job_id, user.full_name as customer_name, address_line_1, address_line_2, city, state, country, zipcode, repeat_start, repeat_interval, repeat_end, start_time, end_time FROM user, customer, service_provider, job, address, job_schedule_meta  WHERE job.customer_id_fk=customer.id and user.id = customer.user_id_fk and service_provider.id = job.service_provider_id_fk and user.address_id_fk = address.id and job.id = job_schedule_meta.job_id_fk and service_provider.user_id_fk = ${userID};`;
+    let sql = `SELECT job.id as job_id, user.full_name as customer_name, quote.service_title as service_title, quote.price_range as price_range, address_line_1, address_line_2, city, state, country, zipcode, repeat_start, repeat_interval, repeat_end, start_time, end_time FROM user, customer, service_provider, job, address, job_schedule_meta, quote  WHERE job.customer_id_fk=customer.id and user.id = customer.user_id_fk and service_provider.id = job.service_provider_id_fk and user.address_id_fk = address.id and job.id = job_schedule_meta.job_id_fk and quote.id = job.quote_id_fk and service_provider.user_id_fk = ${userID};`;
     mysqlConnection.query(sql, (err, result)=>{
         if(err){
             return callback(err);
@@ -111,10 +111,12 @@ const getJobsByUserIDServiceProvider = (userID, callback)=>{
         //convert the result array of objects with job_id, customer_name, customer_address, job_schedule_meta
         result.forEach((element) => {
             let job_schedule_meta = [{repeat_start: element.repeat_start, repeat_interval: element.repeat_interval, repeat_end: element.repeat_end, start_time: element.start_time, end_time: element.end_time}];
-            let customer_address = {customer_address: {address_line_1: element.address_line_1, address_line_2: element.address_line_2, city: element.city, state: element.state, country: element.country, zipcode: element.zipcode}};
+            let customer_address = {address_line_1: element.address_line_1, address_line_2: element.address_line_2, city: element.city, state: element.state, country: element.country, zipcode: element.zipcode};
             let jobObj = {};
             jobObj["job_id"] = element.job_id;
             jobObj["customer_name"] = element.customer_name;
+            jobObj['service_title'] = element.service_title;
+            jobObj['price_range'] = element.price_range;
             jobObj["customer_adress"] = customer_address;
             jobObj["job_schedule_meta"] = job_schedule_meta;
             totArray.push(jobObj);
