@@ -1,5 +1,15 @@
 const mysqlConnection = require("../../connection");
 const SRScheduleModel = require("./schedule.model");
+const nodemailer = require('nodemailer');
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'homeneedsservicesteam8@gmail.com',
+        pass: 'passwordteam8'
+    }
+});
+
+
 
 const getJobs = function(callback){
     mysqlConnection.query("select * from job;",(err, rows, fields)=>{
@@ -202,7 +212,7 @@ const createJobSchedule = (payLoad)=>{
 }
 
 //Input should have necessay payload to create a job.
-const createJobScheduleMeta = (payLoad, callback)=>{
+const createJobScheduleMeta = (email, payLoad, callback)=>{
     createJobSchedule(payLoad)
         .then((jobScheduleObject)=>{
             let metaSchedule = {};
@@ -255,6 +265,16 @@ const createJobScheduleMeta = (payLoad, callback)=>{
                     return callback(err);
                 }
                 //return the insertId for job_schedule_meta, will there be multiple job_schedule_meta?
+                
+                //notification
+                let mailOptions = {
+                    from: 'homeneedsservicesteam8@gmail.com',
+                    to: email,
+                    subject: 'Job Scheduled',
+                    text: `A job has been scheduled under your profile.`
+                }
+                transporter.sendMail(mailOptions);
+
                 return callback(result.insertId+'');
             })
         })

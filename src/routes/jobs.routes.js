@@ -70,7 +70,7 @@ Router.get('/sp/:userID', (req, res)=>{
 Router.post("/create",(req,res,next)=>{
     const payLoad = req.body;
     //using createScheduleMeta
-    jobsModel.createJobScheduleMeta(payLoad,function(err,rows){
+    jobsModel.createJobScheduleMeta(email, payLoad,function(err,rows){
         if(!err)
         res.send(rows);
         else
