@@ -75,7 +75,7 @@ const updateJobStatus = function(jobID,status,callback){
 //job_id,job_title, SP name, Sp phone number, and price range: { // all job schedule meta info repeat date time etc\\}
 //get jobids by a userID for customer
 const getJobsByUserIDCustomer = (userID, callback)=>{
-    let sql = `SELECT job.id as job_id, user.full_name as sp_name, phone_number.phone_number as sp_phone_number, price_range, repeat_start, repeat_interval, repeat_end, start_time, end_time FROM user, customer, service_provider, job, address, job_schedule_meta  WHERE user.id = service_provider.user_id_fk and customer.id = job.customer_id_fk and phone_number.user_id_fk = user.id and job.id = job_schedule_meta.job_id_fk and customer.user_id_fk = ${userID}`;
+    let sql = `select job.id as job_id, job_schedule_meta.repeat_start as start_date, job_schedule_meta.repeat_end as end_date, job_schedule_meta.start_time as start_time,job_schedule_meta.end_time as end_time,job_schedule_meta.repeat_interval as repeat_interval, phone_number.phone_number as phone_number, quote.service_title as service_title, quote.price_range as price_range, quote.service_provider_name as service_provider_name  from user, job, customer, job_schedule_meta, quote, phone_number where user.id = ${userID} and job.customer_id_fk = customer.id and customer.user_id_fk = ${userID} and job_schedule_meta.job_id_fk = job.id and quote.id = job.quote_id_fk and phone_number.user_id_fk = ${userID};`;
     mysqlConnection.query(sql, (err, result)=>{
         if(err){
             return callback(err);
@@ -84,13 +84,15 @@ const getJobsByUserIDCustomer = (userID, callback)=>{
         let totArray = [];
         //convert the result array of objects with job_id, sp_name, phone_number, sp_phone_number, price_range, job_schedule_meta
         result.forEach((element) => {
-            let job_schedule_meta = [{repeat_start: element.repeat_start, repeat_interval: element.repeat_interval, repeat_end: element.repeat_end, start_time: element.start_time, end_time: element.end_time}];
+            let job_schedule_meta = [{repeat_start: element.start_date, repeat_interval: element.repeat_interval, repeat_end: element.end_date, start_time: element.start_time, end_time: element.end_time}];
             let jobObj = {};
             jobObj["job_id"] = element.job_id;
-            jobObj["sp_name"] = element.sp_name;
-            jobObj["sp_phone_number"] = element.sp_phone_number;
+            jobObj["service_provider_name"] = element.service_provider_name;
+            jobObj["phone_number"] = element.phone_number;
             jobObj["price_range"] = element.price_range;
             jobObj["job_schedule_meta"] = job_schedule_meta;
+            jobObj['service_title'] = element.service_title;
+            jobObj['price_range'] = element.price_range;
             totArray.push(jobObj);
         });
         return callback(totArray);
@@ -99,7 +101,7 @@ const getJobsByUserIDCustomer = (userID, callback)=>{
 
 //get jobids by a userID for a service provider
 const getJobsByUserIDServiceProvider = (userID, callback)=>{
-    let sql = `SELECT job.id as job_id, user.full_name as customer_name, address_line_1, address_line_2, city, state, country, zipcode, repeat_start, repeat_interval, repeat_end, start_time, end_time FROM user, customer, service_provider, job, address, job_schedule_meta  WHERE user.id = customer.user_id_fk and service_provider.id = job.service_provider_id_fk and user.address_id_fk = address.id and job.id = job_schedule_meta.job_id_fk and service_provider.user_id_fk = ${userID}`;
+    let sql = `SELECT job.id as job_id, user.full_name as customer_name, address_line_1, address_line_2, city, state, country, zipcode, repeat_start, repeat_interval, repeat_end, start_time, end_time FROM user, customer, service_provider, job, address, job_schedule_meta  WHERE job.customer_id_fk=customer.id and user.id = customer.user_id_fk and service_provider.id = job.service_provider_id_fk and user.address_id_fk = address.id and job.id = job_schedule_meta.job_id_fk and service_provider.user_id_fk = ${userID};`;
     mysqlConnection.query(sql, (err, result)=>{
         if(err){
             return callback(err);
