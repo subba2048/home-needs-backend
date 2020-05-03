@@ -75,7 +75,7 @@ const updateJobStatus = function(jobID,status,callback){
 //job_id,job_title, SP name, Sp phone number, and price range: { // all job schedule meta info repeat date time etc\\}
 //get jobids by a userID for customer
 const getJobsByUserIDCustomer = (userID, callback)=>{
-    let sql = `SELECT job.id as job_id, user.full_name as sp_name, phone_number as sp_phone_number, price_range, repeat_start, repeat_interval, repeat_end, start_time, end_time FROM user, customer, service_provider, job, address, job_schedule_meta  WHERE user.id = service_provider.user_id_fk and customer.id = job.customer_id_fk and phone_number.user_id_fk = user.id and job.id = job_schedule_meta.job_id_fk and customer.user_id_fk = ${userID}`;
+    let sql = `SELECT job.id as job_id, user.full_name as sp_name, phone_number.phone_number as sp_phone_number, price_range, repeat_start, repeat_interval, repeat_end, start_time, end_time FROM user, customer, service_provider, job, address, job_schedule_meta  WHERE user.id = service_provider.user_id_fk and customer.id = job.customer_id_fk and phone_number.user_id_fk = user.id and job.id = job_schedule_meta.job_id_fk and customer.user_id_fk = ${userID}`;
     mysqlConnection.query(sql, (err, result)=>{
         if(err){
             return callback(err);
