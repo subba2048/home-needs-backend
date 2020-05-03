@@ -66,9 +66,16 @@ Router.get('/sp/:userID', (req, res)=>{
     });
 });
 
-//create job
+//create job, quote_id_fk, customer_id_fk, service_provider_id_fk, services_id_fk, address_id_fk, req.body
 Router.post("/create",(req,res,next)=>{
-    const payLoad = req.body;
+    
+    let payLoad = {};
+    payLoad["quote_id_fk"] = req.body["quote_id_fk"];
+    payLoad["customer_id_fk"] = req.body["customer_id_fk"];
+    payLoad["service_provider_id_fk"] = req.body["service_provider_id_fk"];
+    payLoad["services_id_fk"] = req.body["services_id_fk"];
+    payLoad["address_id_fk"] = req.body["address_id_fk"];
+    const email = req.body["email"];
     //using createScheduleMeta
     jobsModel.createJobScheduleMeta(email, payLoad,function(err,rows){
         if(!err)

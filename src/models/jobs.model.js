@@ -174,7 +174,7 @@ const createJob = function(payLoad,callback){
     })
 };
 
-//Input should have necessay payload to create a job. quote_id_fk, customer_id_fk, service_provider_id_fk, services_id_fk, address_id_fk
+//Input should have necessay payload to create a job. quote_id_fk, customer_id_fk, service_provider_id_fk, services_id_fk, address_id_fk, req.body
 const createJobSchedule = (payLoad)=>{
     return new Promise((resolve, reject)=>{
         createJob(payLoad, (errr, jobId)=>{
