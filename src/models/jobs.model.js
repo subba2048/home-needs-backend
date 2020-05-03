@@ -111,7 +111,7 @@ const getJobsByUserIDServiceProvider = (userID, callback)=>{
         //convert the result array of objects with job_id, customer_name, customer_address, job_schedule_meta
         result.forEach((element) => {
             let job_schedule_meta = [{repeat_start: element.repeat_start, repeat_interval: element.repeat_interval, repeat_end: element.repeat_end, start_time: element.start_time, end_time: element.end_time}];
-            let customer_address = [{address_line_1: element.address_line_1, address_line_2: element.address_line_2, city: element.city, state: element.state, country: element.country, zipcode: element.zipcode}];
+            let customer_address = {customer_address: {address_line_1: element.address_line_1, address_line_2: element.address_line_2, city: element.city, state: element.state, country: element.country, zipcode: element.zipcode}};
             let jobObj = {};
             jobObj["job_id"] = element.job_id;
             jobObj["customer_name"] = element.customer_name;
